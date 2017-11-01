@@ -7,6 +7,14 @@
 
 ### Replication and Extension Plans
 
+Questions:
+
+Methodology:
+
+Expected Results:
+
+
+Extension Plans
 
 
 ### Annotated Bibliography
