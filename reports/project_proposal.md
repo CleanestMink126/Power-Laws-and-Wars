@@ -8,14 +8,32 @@
 ### Replication and Extension Plans
 
 Questions:
+- forest fires models : too many mechanism level differences between forest fires and state formation, but "key to any explanation of war sizes depends on how wars spread"
 
 Methodology:
+GeoSim - Transitions baetween equilbria
+- Cumulative relative frequencies of war sizes(cumulative frequency as a function of the severity s of interstate wars)
+- Sand Pile steram -> process of technological change, Avalanches : chains of war decisions triggered by context activation
+- Model
+    - 50*50 square lattice, 200 composite state-like agents
+    - Interactions take place in a dynamic network (not directly in the lattice)
+    - half of resources go to front, half gets distributed proportional to neighbohrs' power
+    - Grim-trigger strategy (normal - reciprocate neighbors's actions, unprovoked attacks as soon as in a sufficiently superior situation)
+    - Contextual activation - increased alertness to geopolitical cahnges in case of conflict in a state's immediate neighborhood
+    - The victor absortbs targeted unit(if capital, complete collapse)
+    - Capitals "tax" provinces
+    - Advancements in technology is modeled by shifting the tax threshold to the right(capital extracts more tax from distant provinces)
 
 Expected Results:
+- Lines : borders, dots : capitals
+- Identify conflict clusters (spatiotemporal cluster-finding algorithm, distinguished btween active and inactive states)
+- then measure severity(total battle damage incurred by all parties to a confilct cluster)
+-
+
 
 
 Extension Plans
-
+- Predict the status of an actual region in the world! Run the simulation and see what happens
 
 ### Annotated Bibliography
 
