@@ -21,31 +21,30 @@ GeoSim model consists of state-like agents on a square lattice. It illustrates t
 Contextual activation means increased alertness to geopolitical changes in case of conflict in a state's immediate neightborhood. Capitals can "tax" provinces and advancements in technology is modeled by shifting the tax threshold so that capital extracts more tax from distant provinces.
 
 We plan to extend the model by adding in the concept of alliances that the model lacks. Another path we are considering is to predict the status of a power map of an actual region
-in the world and observe if any interesting results show up.ed
+in the world and observe if any interesting results come out.ed
 
-###Interpreting Results
+### Interpreting Results
 
 The figures below show the distribution of wars on a log-log scale with frequency and severity form both the original paper and an updated version through 1997. We can validate our replicated model against these results showing that its distribution of wars behaves the same way.
 
 <p align="center">
- <img src="../resources/1-2.png" width=750px height=300px ></img>
+ <img src="../resources/1-2.svg" width=1000px height=500px ></img>
 </p>
 
-The graphic below shows the validation from the Cederman paper along with a graphic of the states where the lines represent borders and the dots represent capitals. We should have a graphics similar to both below to show that our model produces a power law and our states seem qualitatively similar to those represented in the paper.
+The figures below show the validation from the Cederman paper along with a graphic of the states where the lines represent borders and the dots represent capitals. We should have a graphics similar to both below to show that our model produces a power law and our states seem qualitatively similar to those represented in the paper.
 
 <p align="center">
- <img src="../resources/3-4.png" width=750px height=300px ></img>
+ <img src="../resources/3-4.svg" width=750px height=300px ></img>
 </p>
-
-- Lines : borders, dots : capitals
-- Identify conflict clusters (spatiotemporal cluster-finding algorithm, distinguished between active and inactive states)
-- then measure severity(total battle damage incurred by all parties to a conflict cluster
 
 ### Causes For Concern
 The author of the agent based approach article very clearly outlines his framework with any parameters he uses, even including pseudocode. But, everything was written, in the Java-base toolkit Repast, which we are obviously not using. So either finding an effective toolkit for geographical modeling, or coding all the state simulation functions ourselves poses a significant hurdle in implementation. Additionally, even with all the pre-defined parameters, the model will inevitably require some fine tuning due to its high number of dials, so it may be difficult to tell if our model is not working because of a value that we set or because of something wrong with our code.
 visualization
 
 ### Next Steps
+
+First we should review the appendix of the paper which contains all of the implementation information for the project. Once we are appropriately acclimated with the working part we should work on implementation. At this point we should decide whether to implement the environment ourselves or go with a toolbox. Either way, we will have a lot of work to do in setting up the environment to let the states tax and battle. By the end of the first week we should at least be to the point where we can define states and capitals in a program that can interact and tax. Ideally we will be to the point where the states are battling and we can move to setting up the simulation.
+
 
 ### Annotated Bibliography
 
