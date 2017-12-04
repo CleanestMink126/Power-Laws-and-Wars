@@ -4,18 +4,20 @@ class Province:
 
     '''Province class that contains the number of borders and contained resources'''
 
-    def __init__(self):
+    def __init__(self, pos):
         self.res = 0
         self.numBorders = 0
+        self.distToCapital = 0
+        self.pos = pos
 
-    def updateRes(capital, res):
-        pass
+    def updateDist(self, capitalPos):
+        self.distToCapital =
 
 class Actor:
 
     '''Actor class that contains the ID, capital position and dictionaries of its
     provinces and borders'''
-    def __init__(self,actorNum,pos):
+    def __init__(self, actorNum, pos):
         self.actorNum = actorNum
         self.capital = pos
         self.provinces = {}
@@ -26,7 +28,7 @@ class Actor:
         numborders = warObj.numBorder(self.actorNum, pos) #get number of borders
         warObj.image[pos[0],pos[1],:] = warObj.dictCols[self.actorNum] #reset value in color map
         province.borders = numborders
-        if numborders:#add t dictionaries
+        if numborders: # add t dictionaries
             self.borders[pos] = province
         self.provinces[pos] = province
 
@@ -35,6 +37,11 @@ class Actor:
             borders.pop(pos)
         return provinces.pop(pos)
 
+    def updateProvinceDists(self):
+        provinces = self.provinces
+
+        for province in provinces:
+            province.updateDist(self.capital)
 
 
 class War2D:
@@ -104,10 +111,11 @@ class War2D:
     def actorExpand(self,actor):
         borderList = list(actor.borders.keys())
         for i in borderList:
-            pBool, pos = self.provinceExpand(i, actor.actorNum,actor.probexpand)
-            while pBool:#keep expanding until the probablity returns false
+            pBool, pos = self.provinceExpand(i, actor.actorNum, actor.probexpand)
+            while pBool:# keep expanding until the probablity returns false
                 self.npBoard[pos] = actor.actorNum
-                actor.addProvince(pos, Province(),self)
+                newProvince = Province(pos)
+                actor.addProvince(pos, newProvince, self)
                 pBool, pos = self.provinceExpand(pos, actor.actorNum,actor.probexpand)
 
     def provinceExpand(self,pos, num,prob):
