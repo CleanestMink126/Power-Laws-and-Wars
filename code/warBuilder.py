@@ -22,7 +22,7 @@ class Actor:
         self.capital = pos
         self.provinces = {}
         self.borders = {pos: Province()}
-        self.probexpand = 0.5 # probability to expand
+        self.probexpand =  np.random.ranf()/2# probability to expand
 
     def addProvince(self, pos, province, warObj):
         numborders = warObj.numBorder(self.actorNum, pos) #get number of borders
@@ -47,11 +47,13 @@ class Actor:
 class War2D:
     """Implements Conway's Game of Life."""
     initStage= True
+    numberProvinces = 0
     def __init__(self, boardSize, numberPlayers):
         """Initializes the attributes.
 
         """
         self.boardSize = boardSize
+        self.totalSquares = boardSize**2
         self.numberPlayers = numberPlayers
         self.npBoard = np.zeros((boardSize,boardSize), np.uint32)#board of actor ID and positions of provinces
         self.actorDict = {}
@@ -62,11 +64,12 @@ class War2D:
             self.actorDict[i+1] = Actor(i+1,pos)
             self.npBoard[pos] = i+1
             self.dictCols[i+1] = [np.random.ranf(),np.random.ranf(),np.random.ranf()]
+            self.numberProvinces += 1
 
         self.image = np.zeros((boardSize, boardSize,3), np.float32)#create graphical display board
-        for i,v in enumerate(self.npBoard):
-            for j,w in enumerate(v):
-                self.image[i,j,:] = self.dictCols[w]
+        # for i,v in enumerate(self.npBoard):
+        #     for j,w in enumerate(v):
+        #         self.image[i,j,:] = self.dictCols[w]
         print(self.image)
 
     def show(self):#show the current state of the board
@@ -103,10 +106,16 @@ class War2D:
         if self.initStage:
             for i in self.actorDict.values():#loop through and expand actors. should be shuffled in future
                 self.actorExpand(i)
+            if self.numberProvinces == self.totalSquares:
+                self.initStage = False
+        else:
+            print('DONE')
+
+
         # if self.prepStage:
-            pass
+            # pass
         # if self.battleStage:
-            pass
+            # pass
 
     def actorExpand(self,actor):
         borderList = list(actor.borders.keys())
@@ -116,6 +125,7 @@ class War2D:
                 self.npBoard[pos] = actor.actorNum
                 newProvince = Province(pos)
                 actor.addProvince(pos, newProvince, self)
+                self.numberProvinces += 1
                 pBool, pos = self.provinceExpand(pos, actor.actorNum,actor.probexpand)
 
     def provinceExpand(self,pos, num,prob):
@@ -132,7 +142,7 @@ class War2D:
         pass
 if __name__ == "__main__":
 
-    mywar = War2D(20, 20)
+    mywar = War2D(200, 20)
     for i in range(10):
         mywar.step()
         mywar.show()
