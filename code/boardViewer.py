@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 from matplotlib import animation
 from scipy.signal import convolve2d
 
+import warBuilder
 
 
 
@@ -33,7 +34,7 @@ class War2DViewer:
 
         grid: boolean, whether to draw grid lines
         """
-        self.draw_array(self.viewee.array)
+        self.draw_array(self.viewee.image)
         if grid:
             self.draw_grid()
 
@@ -42,19 +43,19 @@ class War2DViewer:
         # Note: we have to make a copy because some implementations
         # of step perform updates in place.
         if array is None:
-            array = self.viewee.array
+            array = self.viewee.image
         a = array.copy()
-        cmap = self.cmap if cmap is None else cmap
+        # cmap = self.cmap if cmap is None else cmap
 
-        n, m = a.shape
-        plt.axis([0, m, 0, n])
-        plt.xticks([])
-        plt.yticks([])
-
-        options = self.options.copy()
-        options['extent'] = [0, m, 0, n]
-        options.update(kwds)
-        self.im = plt.imshow(a, cmap, **options)
+        # n, m = a.shape
+        # plt.axis([0, m, 0, n])
+        # plt.xticks([])
+        # plt.yticks([])
+        #
+        # options = self.options.copy()
+        # options['extent'] = [0, m, 0, n]
+        # options.update(kwds)
+        self.im = plt.imshow(a)
 
     def draw_grid(self):
         """Draws the grid."""
@@ -90,7 +91,12 @@ class War2DViewer:
         """Draws one frame of the animation."""
         if i > 0:
             self.step()
-        a = self.viewee.array
+        a = self.viewee.image
         self.im.set_array(a)
         return (self.im,)
-War2D({1:[1,0,0],0:[0,0,1]},np.array([][1,0,1]]))
+
+if __name__ == "__main__":
+    mywar = warBuilder.War2D(30, 50)
+    animator = War2DViewer(mywar)
+    anim = animator.animate(frames = 20, interval = 300)
+    plt.show()
