@@ -1,13 +1,18 @@
 import numpy as np
 import matplotlib.pyplot as plt
 class Province:
+
     '''Province class that contains the number of borders and contained resources'''
-    res = 0
-    borders = 0
+
     def __init__(self):
+        self.res = 0
+        self.numBorders = 0
+
+    def updateRes(capital, res):
         pass
 
 class Actor:
+
     '''Actor class that contains the ID, capital position and dictionaries of its
     provinces and borders'''
     def __init__(self,actorNum,pos):
@@ -17,19 +22,18 @@ class Actor:
         self.borders = {pos: Province()}
         self.probexpand = 0.5 # probability to expand
 
-    def addProvince(self,pos, province,warObj):
-        numborders = warObj.numBorder(self.actorNum,pos)#get number of borders
-        warObj.image[pos[0],pos[1],:] = warObj.dictCols[self.actorNum]#reset value in color map
+    def addProvince(self, pos, province, warObj):
+        numborders = warObj.numBorder(self.actorNum, pos) #get number of borders
+        warObj.image[pos[0],pos[1],:] = warObj.dictCols[self.actorNum] #reset value in color map
         province.borders = numborders
         if numborders:#add t dictionaries
             self.borders[pos] = province
         self.provinces[pos] = province
 
-    def removeProvince(self,pos):#pretty straightforward. removes from dictionaries and returns province
+    def removeProvince(self, pos):#pretty straightforward. removes from dictionaries and returns province
         if pos in self.borders:
             borders.pop(pos)
         return provinces.pop(pos)
-
 
 
 
@@ -78,7 +82,7 @@ class War2D:
                 borders += 1
         return borders
 
-    def numZero(self,pos):#get unoccupied neighbors
+    def numZero(self,pos): #get unoccupied neighbors
         neighbors = self.getneighbors(pos)
         borders = []
         for i in neighbors:
@@ -92,6 +96,10 @@ class War2D:
         if self.initStage:
             for i in self.actorDict.values():#loop through and expand actors. should be shuffled in future
                 self.actorExpand(i)
+        # if self.prepStage:
+            pass
+        # if self.battleStage:
+            pass
 
     def actorExpand(self,actor):
         borderList = list(actor.borders.keys())
@@ -110,6 +118,10 @@ class War2D:
                 return True, borderList[choice[0]]
         return False, None
 
+    def interactBattle():
+        pass
+    def battle():
+        pass
 if __name__ == "__main__":
 
     mywar = War2D(20, 20)
