@@ -21,6 +21,8 @@ class Actor:
         self.provinces = {}
         self.borders = {pos: Province()}
         self.probexpand =  np.random.ranf()/2# probability to expand
+        self.border
+        self.warStates = {}
 
     def addProvince(self, pos, province, warObj):
         numborders = warObj.numBorder(self.actorNum, pos) #get number of borders
@@ -34,6 +36,8 @@ class Actor:
         if pos in self.borders:
             borders.pop(pos)
         return provinces.pop(pos)
+
+    def
 
 
 
