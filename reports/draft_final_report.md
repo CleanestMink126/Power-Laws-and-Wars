@@ -4,18 +4,14 @@
 
 ### Abstract
 
-Lewis Richardson, in his post-WWII paper analyses the frequency and severity of human conflict. [3]
-He finds that the severity of all wars follows a power law distribution. Almost 50 years later, the exact reasons and principals behind this are still not well understood or explained with methods relying on equilibrium based model (Cederman).
+Lewis Richardson, in his post-WWII paper analyses the frequency and severity of wars. [3]
+He finds that the severity of the wars follows a power law distribution. Almost 50 years later, the exact reasons and principals behind this observation are still not well understood or explained with methods relying on equilibrium based models (Cederman).
 Cederman tackles the problem with an agent based model in an attempt to recreate the power law distribution first observed by Richardson [1].
-We replicate this model in Python. We extend the ori by simulating it based on real world data and by adding in more complex and realistic actions such as the conecept of alliance to the agents.
+We replicate a similar model that initializes states that expand randomly. We extend the original model by
 
 
 ### Replication and Extension
-Richardson in 1945, reported that the severity of all wars follows a power law distribution [3]. We find only a few occasions when scholars attempted to explain why.
-To answer these questions, Cederman designed an agent-based model called GeoSim that illustrates the transitions between equilbria in wars and state formations.
-By running simulations with his model, he replicates the plot Richardson generated almost 70 years ago. While one of the previous studies proposed a forest fire model [2], Cederman believed
-that the forest fire model of wars has too many mechanism level differences compared to the processes of real world state formation and wars but agreed that the "key to any explanation
-of war sizes depends on how wars spread". [1]
+Richardson in 1945, reported that the severity of all wars follows a power law distribution [3]. We find only a few occasions when scholars attempted to explain why. To answer these questions, Cederman designed an agent-based model called GeoSim that illustrates the transitions between equilbria in wars and state formations. By running simulations with his model, he replicates the plot Richardson generated almost 70 years ago. While one of the previous studies proposed a forest fire model [2], Cederman believed that the forest fire model of wars has too many mechanism level differences compared to the processes of real world state formation and wars but agreed that the "key to any explanation   of war sizes depends on how wars spread". [1]
 
 By replicating the GeoSim model Cederman proposed with python, we seek to find answer for the following questions : why are casualty levels of wars power-law distributed? how do wars start and spread?
 GeoSim model consists of state-like agents on a square lattice. It illustrates the transitions between equilbria. The model draws an analogy which maps the process of technological change to the sand pile stream and maps the chains of war decisions triggered by context activation to Avalanches.
@@ -38,20 +34,22 @@ The figures below show the validation from the Cederman paper along with a graph
  <img src="../resources/3-4.svg" width=750px height=300px ></img>
 </p>
 
-### Causes For Concern
-The author of the agent based approach article very clearly outlines his framework with any parameters he uses, even including pseudocode. But, everything was written, in the Java-base toolkit Repast, which we are obviously not using. So either finding an effective toolkit for geographical modeling, or coding all the state simulation functions ourselves poses a significant hurdle in implementation. Additionally, even with all the pre-defined parameters, the model will inevitably require some fine tuning due to its high number of dials, so it may be difficult to tell if our model is not working because of a value that we set or because of something wrong with our code.
-visualization
+<p align="center">
+ <img src="../resources/colored.png" width=750px height=300px ></img>
+</p>
+<p align="center">
+ <img src="../resources/resources.png" width=750px height=300px ></img>
+</p>
+<p align="center">
+ <img src="../resources/colored2.png" width=750px height=300px ></img>
+</p>
 
-### Next Steps
+<p align="center">
+ <img src="../resources/resources2.png" width=750px height=300px ></img>
+</p>
 
-First we should review the appendix of the paper which contains all of the implementation information for the project. Once we are appropriately acclimated with the working part we should work on implementation. At this point we should decide whether to implement the environment ourselves or go with a toolbox. Either way, we will have a lot of work to do in setting up the environment to let the states tax and battle. By the end of the first week we should at least be to the point where we can define states and capitals in a program that can interact and tax. Ideally we will be to the point where the states are battling and we can move to setting up the simulation.
+### Conclusioon
 
-
-
-#### Impact of System Parameters
-
-
-#### Previous Results
 
 
 ### Annotated Bibliography
