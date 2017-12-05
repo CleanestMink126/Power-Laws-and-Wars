@@ -7,19 +7,19 @@
 Lewis Richardson, in his post-WWII paper analyses the frequency and severity of wars. [3]
 He finds that the severity of the wars follows a power law distribution. Almost 50 years later, the exact reasons and principals behind this observation are still not well understood or explained with methods relying on equilibrium based models (Cederman).
 Cederman tackles the problem with an agent based model in an attempt to recreate the power law distribution first observed by Richardson [1].
-We designed and implemented a similar model to find out whether a simpler model can produce the same power-law graph.
-We extend the original model by
+We designed and implemented a similar model to find out whether a simpler model can produce the same power-law graph. We conclude that ...(working on this part)
 
 
 ### Replication and Extension
 Richardson in 1945, reported that the severity of all wars follows a power law distribution [3]. We find only a few occasions when scholars attempted to explain why. To answer these questions, Cederman designed an agent-based model called GeoSim that illustrates the transitions between equilbria in wars and state formations. By running simulations with his model, he replicates the plot Richardson generated almost 70 years ago. While one of the previous studies proposed a forest fire model [2], Cederman believed that the forest fire model of wars has too many mechanism level differences compared to the processes of real world state formation and wars but agreed that the "key to any explanation   of war sizes depends on how wars spread". [1]
 
-By replicating the GeoSim model Cederman proposed with python, we seek to find answer for the following questions : why are casualty levels of wars power-law distributed? how do wars start and spread?
+
 GeoSim model consists of state-like agents on a square lattice. It illustrates the transitions between equilbria. The model draws an analogy which maps the process of technological change to the sand pile stream and maps the chains of war decisions triggered by context activation to Avalanches.
 Contextual activation means increased alertness to geopolitical changes in case of conflict in a state's immediate neightborhood. Capitals can "tax" provinces and advancements in technology is modeled by shifting the tax threshold so that capital extracts more tax from distant provinces.
 
-We plan to extend the model by adding in the concept of alliances that the model lacks. Another path we are considering is to predict the status of a power map of an actual region
-in the world and observe if any interesting results come out.ed
+By implementing a similar agent-based model, we seek to find answer for the following questions : How do wars start and spread? why are casualty levels of wars power-law distributed?
+
+
 
 ### Interpreting Results
 
@@ -35,19 +35,24 @@ The figures below show the validation from the Cederman paper along with a graph
  <img src="../resources/3-4.svg" width=750px height=300px ></img>
 </p>
 
+These figures below show the maps of the states in our model after the initialization phase.
 <p align="center">
  <img src="../resources/colored.png" width=750px height=300px ></img>
-</p>
-<p align="center">
- <img src="../resources/resources.png" width=750px height=300px ></img>
 </p>
 <p align="center">
  <img src="../resources/colored2.png" width=750px height=300px ></img>
 </p>
 
+This figure below show the grids of resource allocation along the borders after the initialization phase.
+<p align="center">
+ <img src="../resources/resources.png" width=750px height=300px ></img>
+</p>
+
 <p align="center">
  <img src="../resources/resources2.png" width=750px height=300px ></img>
 </p>
+
+(power law graph still needs to be replicated, we are working on it)
 
 ### Conclusion
 
