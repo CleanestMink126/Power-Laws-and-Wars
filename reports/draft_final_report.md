@@ -1,5 +1,5 @@
-# Effects of Defectors on Greedy Routing in Complex Networks
-### Nick Steelman, Matt Brucker
+# Agent-Based Simulation of Wars and State Formation
+## Nick Steelman and Seungin Lyu
 
 
 ### Abstract
@@ -7,7 +7,8 @@
 Lewis Richardson, in his post-WWII paper analyses the frequency and severity of wars. [3]
 He finds that the severity of the wars follows a power law distribution. Almost 50 years later, the exact reasons and principals behind this observation are still not well understood or explained with methods relying on equilibrium based models (Cederman).
 Cederman tackles the problem with an agent based model in an attempt to recreate the power law distribution first observed by Richardson [1].
-We replicate a similar model that initializes states that expand randomly. We extend the original model by
+We designed and implemented a similar model to find out whether a simpler model can produce the same power-law graph.
+We extend the original model by
 
 
 ### Replication and Extension
@@ -48,7 +49,7 @@ The figures below show the validation from the Cederman paper along with a graph
  <img src="../resources/resources2.png" width=750px height=300px ></img>
 </p>
 
-### Conclusioon
+### Conclusion
 
 
 
