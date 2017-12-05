@@ -91,12 +91,12 @@ class War2DViewer:
         """Draws one frame of the animation."""
         if i > 0:
             self.step()
-        a = self.viewee.image2
+        a = self.viewee.image
         self.im.set_array(a)
         return (self.im,)
 
 if __name__ == "__main__":
-    mywar = warBuilder.War2D(200, 20)
+    mywar = warBuilder.War2D(100, 10)
     animator = War2DViewer(mywar)
     anim = animator.animate(frames = 20, interval = 300)
     plt.show()

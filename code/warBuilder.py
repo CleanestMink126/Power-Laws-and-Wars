@@ -15,30 +15,31 @@ class Province:
 class Actor:
     '''Actor class that contains the ID, capital position and dictionaries of its
     provinces and borders'''
-    borderStates = {} #k = stateID v = set of position representing borders
-    borderStateRes = {} #k = stateID v = total res that each enemey has put against this actor
-    borderStateSelf = {} #k = stateID v = total res that this actor has put against each enemy k
-    borderStateAttackProb = {} #k = stateID, v = attackProbability of this actor against state k
 
-    warStates = {} #k = state we are at war with v = total damage
-    totalEnemy = 0 # total enemy resources
-    totalWar = 0 # totla resources of peop (adjusted by lowest value)
-    numTotalBorders = 0
     def __init__(self, actorNum, pos):
+        self.borderStates = {} #k = stateID v = set of position representing borders
+        self.borderStateRes = {} #k = stateID v = total res that each enemey has put against this actor
+        self.borderStateSelf = {} #k = stateID v = total res that this actor has put against each enemy k
+        self.borderStateAttackProb = {} #k = stateID, v = attackProbability of this actor against state k
+
+        self.warStates = {} #k = state we are at war with v = total damage
+        self.totalEnemy = 0 # total enemy resources
+        self.totalWar = 0 # totla resources of peop (adjusted by lowest value)
+        self.numTotalBorders = 0
         self.actorNum = actorNum
         self.capital = pos
         self.provinces = {pos: Province(pos)} #k = pos v = province obj
         self.borders = {pos}#list of border states
-        self.probexpand =  np.random.ranf()/4 + .25 # probability to expand
+        self.probexpand =  np.random.ranf()/2 # probability to expand
         self.fixesRes = .5
 
 
-    def addProvince(self, pos, province, warObj):
+    def addProvince(self, pos, province, warObj, res = 0):
         warObj.image[pos[0],pos[1],:] = warObj.dictCols[self.actorNum] #reset value in color map
         borders, _ = warObj.numBorder(self.actorNum, pos) #get borders
         province.numBorders = len(borders)
         province.updateDist(self.capital)
-        province.res = 0
+        province.res = res
         if len(borders): # add t dictionaries
             self.borders.add(pos)
         self.provinces[pos] = province
@@ -46,16 +47,17 @@ class Actor:
 
     def removeProvince(self, pos,warObj):  #pretty straightforward. removes from dictionaries and returns province
         if pos in self.borders:
-            self.borders.pop(pos)
+            self.borders.remove(pos)
             _ , same = warObj.numBorder(self.actorNum, pos)
             for i in same:
                 if i not in self.borders:
-                    borders.add(i)
-        return provinces.pop(pos)
+                    self.borders.add(i)
+        return self.provinces.pop(pos)
 
     def updateBorders(self,warObj):
         self.borderStateRes = {}
         self.borderStates = {}
+        self.borderStateSelf = {}
         borderList = list(self.borders)#get a list of the border states
         totalborder = 0#total borders with a warring state found
         self.minV = None#greatest advantage over a warring state
@@ -73,7 +75,7 @@ class Actor:
                         if state in self.warStates:#if warring with the state
                             totalborder += 1
                             diffBorder = (warObj.actorDict[state].provinces[b].res - self.provinces[k].res)#find diff
-                            if (not minV or diffBorder < minV):#check if min
+                            if (not self.minV or diffBorder < self.minV):#check if min
                                 self.minV = diffBorder
                     else:
                         self.borderStates[state] = {k}
@@ -81,7 +83,7 @@ class Actor:
                         if state in self.warStates:
                             totalborder += 1
                             diffBorder = (warObj.actorDict[state].provinces[b].res - self.provinces[k].res)
-                            if (not minV or diffBorder < minV):
+                            if (not self.minV or diffBorder < self.minV):
                                 self.minV = diffBorder
                     # print(self.borderStateRes)
         for k,v in self.borderStateRes.items():#check border value from other person in each case
@@ -91,25 +93,61 @@ class Actor:
             else:
                 self.borderStateSelf[k] = self.borderStateRes[k]
         self.totalEnemy = sum(self.borderStateRes.values())
-        if self.minV: self.totalWar = sum([self.borderStateRes[x] for x,v in self.warStates]) + totalborder * -1 * self.minV
+        if self.minV: self.totalWar = sum([self.borderStateRes[x] for x,v in self.warStates.items() if x in self.borderStateRes]) + totalborder * -1 * self.minV
 
     def distributeResources(self, totalRes,warObj):
         borderList = list(self.borders)
-        fixedRate = (self.fixesRes*totalRes)/self.totalEnemy #these variables
+         #these variables
         #mean nothing by themself I just multiplied out the constants at the beginning
         #of the loop rather than inside the loop
-        if self.totalWar: variableRate =((1-self.fixesRes)*totalRes)/self.totalWar
+        fixedRate = 0
+        variableRate = 0
+        if self.totalWar and self.totalEnemy:
+            variableRate =((1-self.fixesRes)*totalRes)/self.totalWar
+            fixedRate = (self.fixesRes*totalRes)/self.totalEnemy
+        elif self.totalEnemy:
+            fixedRate = (totalRes)/self.totalEnemy
         for k in borderList:
-            borders,same = warObj.numBorder(self.actorNum, k)
-            if not len(borders):
+            borders,same = warObj.numBorder(self.actorNum, k)#find borders
+            if not len(borders):#if there are no borders get rid of it
                 self.borders.pop(k)
             else:
                 for b in borders:
-                    state = warObj.npBoard[b]
-                    eRes = warObj.actorDict[state].provinces[b].res
-                    self.provinces[k].res += fixedRate * eRes
+                    state = warObj.npBoard[b]#get the state each border belongs to
+                    eRes = warObj.actorDict[state].provinces[b].res#get that provinces resources
+                    self.provinces[k].res += fixedRate * eRes #scale according to current resources
                     if state in self.warStates:
-                        self.provinces[k].res += (variableRate -self.minV) * eRes
+                        self.provinces[k].res += (variableRate -self.minV) * eRes# add more if they are at war
+
+    def wageWar(self, warObj):
+        enemies =list(self.warStates.keys())
+        for enemy in enemies:#for every enemy
+            if enemy in self.borderStates:
+                enemyActor = warObj.actorDict[enemy]
+                print(enemy)
+                for k in self.borderStates[enemy]:#find all border states next to this  enemy
+                    borders,_ = warObj.numBorder(self.actorNum, k) #find eneemys that are adjacent
+                    for border in borders: #for all the enemies near the border province
+                        if border in enemyActor.provinces: #
+
+                            enemyProvince = enemyActor.provinces[border]
+                            if k in self.provinces:
+                                conquered = warObj.battle(self.provinces[k],enemyProvince)#fight!
+                            else:
+                                conquered=0
+
+                            if conquered:#if there is a loser
+                                warObj.npBoard[border] = self.actorNum#
+                                borders2,same = warObj.numBorder(self.actorNum, k)
+                                if len(borders2):
+                                    newRes = self.provinces[k].res / 2
+                                    self.provinces[k].res = newRes
+                                else:
+                                    newRes = self.provinces[k].res
+                                    self.provinces[k].res = 0
+                                warObj.switchProvince(border, enemyActor,self,newRes)
+            else:
+                self.borderStates.pop(enemy,None)
 
     def updateProbAttack(self):
         """Defines probability of Attacking an enemey state based on
@@ -117,12 +155,19 @@ class Actor:
         borderStateRes = self.borderStateRes #k = stateID v = total res
         borderStateSelf = self.borderStateSelf
         enemyStates = list(borderStateRes.keys())
-        print("SELF",borderStateSelf)
-        print("OTHER",borderStateRes)
-        print("PARTS", self.borderStates)
         for actor in enemyStates:
-            rate = borderStateSelf[actor] / borderStateRes[actor]
-            self.borderStateAttackProb[actor] = self.sigmoid(rate)
+            if borderStateRes[actor] == 0:
+                self.borderStateRes.pop(actor,None)
+                self.borderStateSelf.pop(actor,None)
+                self.borderStateAttackProb.pop(actor,None)
+            else:
+                rate = borderStateSelf[actor] / borderStateRes[actor]
+                self.borderStateAttackProb[actor] = self.sigmoid(rate)
+
+    def declareWar(self):
+        for k,v in self.borderStateAttackProb.items():
+            if k not in self.warStates and np.random.ranf() < v:
+                self.warStates[k] = 0
 
     def sigmoid(self, rate):
         return 1 / (1 + np.exp(3-rate))
@@ -139,7 +184,7 @@ class War2D:
         self.totalSquares = boardSize**2
         self.numberPlayers = numberPlayers
         self.npBoard = np.zeros((boardSize,boardSize), np.uint32)#board of actor ID and positions of provinces
-        self.actorDict = {}
+        self.actorDict = {} # k: actorID, v: actorObjects
         self.dictCols = {0:(0.,0.,0.)} #dictionary relating actor ID and color
         self.FIXED_RES = 100 # constant for initial resource allocatead to each provinces
         positions = np.random.choice(boardSize*boardSize, numberPlayers)#randomly initialize actors
@@ -155,7 +200,7 @@ class War2D:
         # for i,v in enumerate(self.npBoard):
         #     for j,w in enumerate(v):
         #         self.image[i,j,:] = self.dictCols[w]
-        print(self.image)
+        # print(self.image)
 
     def show(self):#show the current state of the board
         plt.imshow(self.image)
@@ -164,6 +209,18 @@ class War2D:
     def show2(self):#show the current state of the board
         plt.imshow(self.image2)
         plt.show()
+
+    def switchProvince(self,pos, loser, winner, res):
+        province = loser.removeProvince(pos, self)
+        # if pos == loser.capital:
+        #     self.conquer(loser,winner)
+        if pos in loser.borderStates[winner.actorNum]:
+            loser.borderStates[winner.actorNum].remove(pos)
+        winner.addProvince(pos, province,self,res)
+
+    def conquer(self,loser, winner):
+        winner.provinces += loser.provinces
+        #//TODO
 
     def colorCodeProvinces(self):
         maxv = 0
@@ -220,9 +277,29 @@ class War2D:
                 totalRes = self.FIXED_RES * len(actor.provinces)
                 actor.distributeResources(totalRes, self)
                 actor.updateProbAttack()
-                # print(actor.totalEnemy)
-                # print(actor.borderStateAttackProb)
+                actor.declareWar()
+                actor.wageWar(self)
+                print(actor.totalEnemy)
+                print(actor.borderStateAttackProb)
 
+
+    def battle(self, p1, p2):
+        """Defines the battle behavior for province p1 and province p2"""
+        BATTLE_DAMAGE = 0.1 # battle damage
+        a1 = self.npBoard[p1.pos] # the actor ID of province p1
+        a2 = self.npBoard[p2.pos] # the actor ID of province p2
+        # probAttacking = self.actorDict[a1].borderStateAttackProb[a2] # probability that p1 will attack p2, macroscopic level
+        probWinning = self.actorDict[a1].sigmoid(p1.res / p2.res) # probability that p1 will win against p2, microscopic province level
+        randProb = np.random.ranf()
+        while probWinning > randProb: # won
+            p1.res -= p1.res * BATTLE_DAMAGE
+            p2.res -= p1.res * BATTLE_DAMAGE
+            if p2.res <= 0:
+                return True
+            probWinning = self.actorDict[a1].sigmoid(p1.res / p2.res) # probability that p1 will win against p2, microscopic province level
+            randProb = np.random.ranf()
+
+        return False
 
     def actorExpand(self,actor):
         borderList = list(actor.borders)
