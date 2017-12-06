@@ -96,7 +96,7 @@ class War2DViewer:
         return (self.im,)
 
 if __name__ == "__main__":
-    mywar = warBuilder.War2D(100, 10)
+    mywar = warBuilder.War2D(100, 20)
     animator = War2DViewer(mywar)
-    anim = animator.animate(frames = 20, interval = 300)
+    anim = animator.animate(frames = 40, interval = 300)
     plt.show()
