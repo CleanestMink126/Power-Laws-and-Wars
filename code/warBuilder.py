@@ -54,6 +54,39 @@ class Actor:
                     self.borders.add(i)
         return self.provinces.pop(pos)
 
+    def updateBorder(self, k,warobj):
+        borders,same = warObj.numBorder(self.actorNum, k)#find the borders for each border province
+        self.provinces[k].numBorders = len(borders) #update the correstponding province
+        if not len(borders):#if no borders remove the obj
+            self.borders.remove(k)
+        else:
+            for b in borders:
+                state = warObj.npBoard[b]#get the state
+                if state in self.borderStates:#if state indexed
+                    self.borderStates[state].add(k)#add border
+                    self.borderStateRes[state] = self.borderStateRes.pop(state) + warObj.actorDict[state].provinces[b].res#add enemy resource
+                    if state in self.warStates:#if warring with the state
+                        totalborder += 1
+                        diffBorder = (warObj.actorDict[state].provinces[b].res - self.provinces[k].res)#find diff
+                        if (not self.minV or diffBorder < self.minV):#check if min
+                            self.minV = diffBorder
+                else:
+                    self.borderStates[state] = {k}
+                    self.borderStateRes[state] = warObj.actorDict[state].provinces[b].res
+                    if state in self.warStates:
+                        totalborder += 1
+                        diffBorder = (warObj.actorDict[state].provinces[b].res - self.provinces[k].res)
+                        if (not self.minV or diffBorder < self.minV):
+                            self.minV = diffBorder
+
+    def updateSelfBorders(self,warObj):
+        for k,v in self.borderStateRes.items():#check border value from other person in each case
+            if self.actorNum in warObj.actorDict[k].borderStateRes:
+                self.borderStateSelf[k] = warObj.actorDict[k].borderStateRes[self.actorNum]
+            else:
+                print("COULD NOT FIND SELF IN COUNTERPART")
+                self.borderStateSelf[k] = self.borderStateRes[k]#this is trash and should not happen often
+
     def updateBorders(self,warObj):
         self.borderStateRes = {}
         self.borderStates = {}
@@ -62,36 +95,8 @@ class Actor:
         totalborder = 0#total borders with a warring state found
         self.minV = None#greatest advantage over a warring state
         for k in borderList:
-            borders,same = warObj.numBorder(self.actorNum, k)#find the borders for each border province
-            self.provinces[k].numBorders = len(borders) #update the correstponding province
-            if not len(borders):#if no borders remove the obj
-                self.borders.remove(k)
-            else:
-                for b in borders:
-                    state = warObj.npBoard[b]#get the state
-                    if state in self.borderStates:#if state indexed
-                        self.borderStates[state].add(k)#add border
-                        self.borderStateRes[state] = self.borderStateRes.pop(state) + warObj.actorDict[state].provinces[b].res#add enemy resource
-                        if state in self.warStates:#if warring with the state
-                            totalborder += 1
-                            diffBorder = (warObj.actorDict[state].provinces[b].res - self.provinces[k].res)#find diff
-                            if (not self.minV or diffBorder < self.minV):#check if min
-                                self.minV = diffBorder
-                    else:
-                        self.borderStates[state] = {k}
-                        self.borderStateRes[state] = warObj.actorDict[state].provinces[b].res
-                        if state in self.warStates:
-                            totalborder += 1
-                            diffBorder = (warObj.actorDict[state].provinces[b].res - self.provinces[k].res)
-                            if (not self.minV or diffBorder < self.minV):
-                                self.minV = diffBorder
+            self.updateBorder(k,warObj)
                     # print(self.borderStateRes)
-        for k,v in self.borderStateRes.items():#check border value from other person in each case
-            if self.actorNum in warObj.actorDict[k].borderStateRes:
-                res = warObj.actorDict[k].borderStateRes[self.actorNum]
-                self.borderStateSelf[k] = res
-            else:
-                self.borderStateSelf[k] = self.borderStateRes[k]
         self.totalEnemy = sum(self.borderStateRes.values())
         if self.minV: self.totalWar = sum([self.borderStateRes[x] for x,v in self.warStates.items() if x in self.borderStateRes]) + totalborder * -1 * self.minV
 
@@ -119,33 +124,27 @@ class Actor:
                     if state in self.warStates:
                         self.provinces[k].res += (variableRate -self.minV) * eRes# add more if they are at war
 
+    def actorBattle(self,k,enemyActor,warobj):
+        borders,_ = warObj.numBorder(self.actorNum, k) #find eneemys that are adjacent
+        for border in borders: #for all the enemies near the border province
+            if border in enemyActor.provinces: #
+                enemyProvince = enemyActor.provinces[border]
+                if k in self.provinces:
+                    conquered = warObj.battle(self.provinces[k],enemyProvince)#fight!
+                else:
+                    conquered=0
+                if conquered:#if there is a loser
+                    print("CONQUERED")
+                    warObj.switchProvince(border, enemyActor,self,newRes)
+
     def wageWar(self, warObj):
         enemies =list(self.warStates.keys())
         for enemy in enemies:#for every enemy
             if enemy in self.borderStates:
                 enemyActor = warObj.actorDict[enemy]
-                print(enemy)
+                # print(enemy)
                 for k in self.borderStates[enemy]:#find all border states next to this  enemy
-                    borders,_ = warObj.numBorder(self.actorNum, k) #find eneemys that are adjacent
-                    for border in borders: #for all the enemies near the border province
-                        if border in enemyActor.provinces: #
-
-                            enemyProvince = enemyActor.provinces[border]
-                            if k in self.provinces:
-                                conquered = warObj.battle(self.provinces[k],enemyProvince)#fight!
-                            else:
-                                conquered=0
-
-                            if conquered:#if there is a loser
-                                warObj.npBoard[border] = self.actorNum#
-                                borders2,same = warObj.numBorder(self.actorNum, k)
-                                if len(borders2):
-                                    newRes = self.provinces[k].res / 2
-                                    self.provinces[k].res = newRes
-                                else:
-                                    newRes = self.provinces[k].res
-                                    self.provinces[k].res = 0
-                                warObj.switchProvince(border, enemyActor,self,newRes)
+                    self.actorBattle(k,enemyActor,warObj)
             else:
                 self.borderStates.pop(enemy,None)
 
@@ -164,10 +163,12 @@ class Actor:
                 rate = borderStateSelf[actor] / borderStateRes[actor]
                 self.borderStateAttackProb[actor] = self.sigmoid(rate)
 
-    def declareWar(self):
+    def declareWar(self,warobj):
         for k,v in self.borderStateAttackProb.items():
             if k not in self.warStates and np.random.ranf() < v:
                 self.warStates[k] = 0
+                warObj.actorDict[k].warStates[self.actorNum] = 0
+
 
     def sigmoid(self, rate):
         return 1 / (1 + np.exp(3-rate))
@@ -210,13 +211,25 @@ class War2D:
         plt.imshow(self.image2)
         plt.show()
 
-    def switchProvince(self,pos, loser, winner, res):
+    def switchProvince(self,pos, loser, winner):#UPDATE
+
+        self.npBoard[border] = winner.actorNum#
+        borders,same = self.numBorder(winner.actorNum, pos)
+        if len(borders):
+            newRes = winner.provinces[k].res / 2
+            winner.provinces[k].res = newRes
+        else:
+            newRes = winner.provinces[k].res
+            winner.provinces[k].res = 0
+        winner.addProvince(pos, province,self,res)
+
         province = loser.removeProvince(pos, self)
+        loser.borderStates[winner.actorNum].remove(pos)
         # if pos == loser.capital:
         #     self.conquer(loser,winner)
         if pos in loser.borderStates[winner.actorNum]:
             loser.borderStates[winner.actorNum].remove(pos)
-        winner.addProvince(pos, province,self,res)
+
 
     def conquer(self,loser, winner):
         winner.provinces += loser.provinces
@@ -261,6 +274,25 @@ class War2D:
                 borders.append(i)
         return borders
 
+    def updateActorBorders(self):
+        for actor in self.actorDict.values():#loop through and expand actors. should be shuffled in future
+            actor.updateBorders(self)
+
+    def updateActorSelfBorders(self):
+        for actor in self.actorDict.values():#loop through and expand actors. should be shuffled in future
+            actor.updateSelfBorders(self)
+            actor.updateProbAttack()
+
+    def updateActorDist(self):
+        totalRes = self.FIXED_RES * len(actor.provinces)
+        for actor in self.actorDict.values():#loop through and expand actors. should be shuffled in future
+            actor.distributeResources(totalRes,self)
+
+    def actorWars(self):
+        for actor in self.actorDict.values():#loop through and expand actors. should be shuffled in future
+            actor.declareWar()
+            actor.wageWar(self)
+
     def step(self):
         """Executes one time step."""
 
@@ -271,16 +303,12 @@ class War2D:
                 self.initRes()
                 self.initStage = False
         else:
+            self.updateActorBorders()
+            self.updateActorSelfBorders()
+            self.updateActorDist()
+            self.actorWars()
             self.colorCodeProvinces()
-            for actor in self.actorDict.values():#loop through and expand actors. should be shuffled in future
-                actor.updateBorders(self)
-                totalRes = self.FIXED_RES * len(actor.provinces)
-                actor.distributeResources(totalRes, self)
-                actor.updateProbAttack()
-                actor.declareWar()
-                actor.wageWar(self)
-                print(actor.totalEnemy)
-                print(actor.borderStateAttackProb)
+
 
 
     def battle(self, p1, p2):
@@ -294,11 +322,13 @@ class War2D:
         while probWinning > randProb: # won
             p1.res -= p1.res * BATTLE_DAMAGE
             p2.res -= p1.res * BATTLE_DAMAGE
-            if p2.res <= 0:
+            randProb = np.random.ranf()
+            if probWinning < randProb:
+                return False
+            elif p2.res <= 0:
                 return True
             probWinning = self.actorDict[a1].sigmoid(p1.res / p2.res) # probability that p1 will win against p2, microscopic province level
             randProb = np.random.ranf()
-
         return False
 
     def actorExpand(self,actor):
