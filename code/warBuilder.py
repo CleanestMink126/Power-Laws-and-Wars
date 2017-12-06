@@ -135,7 +135,7 @@ class Actor:
                     conquered=0
                 if conquered:#if there is a loser
                     print("CONQUERED")
-                    warObj.switchProvince(border, enemyActor,self,newRes)
+                    warObj.switchProvince(border, enemyActor,self,newRes,k)
 
     def wageWar(self, warObj):
         enemies =list(self.warStates.keys())
@@ -211,24 +211,28 @@ class War2D:
         plt.imshow(self.image2)
         plt.show()
 
-    def switchProvince(self,pos, loser, winner):#UPDATE
-
+    def switchProvince(self,pos, loser, winner,k):#UPDATE
         self.npBoard[border] = winner.actorNum#
-        borders,same = self.numBorder(winner.actorNum, pos)
+        borders,same = self.numBorder(winner.actorNum, k)
         if len(borders):
             newRes = winner.provinces[k].res / 2
             winner.provinces[k].res = newRes
         else:
             newRes = winner.provinces[k].res
             winner.provinces[k].res = 0
-        winner.addProvince(pos, province,self,res)
-
         province = loser.removeProvince(pos, self)
-        loser.borderStates[winner.actorNum].remove(pos)
+        winner.addProvince(pos, province,self,res)
         # if pos == loser.capital:
         #     self.conquer(loser,winner)
         if pos in loser.borderStates[winner.actorNum]:
             loser.borderStates[winner.actorNum].remove(pos)
+            for border in borders:
+                if border in loser.provinces:
+                    loser.borderStates[winner.actorNum].add(border)
+            for border in same:
+                borders2,_ = self.numBorder(winner.actorNum, border)
+                if not len(borders2):
+                    winner.borderStates[loser.actorNum].remove(border)
 
 
     def conquer(self,loser, winner):
