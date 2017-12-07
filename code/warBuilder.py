@@ -90,6 +90,7 @@ class Actor:
             else:
                 print("COULD NOT FIND SELF IN COUNTERPART")
                 self.borderStateSelf[k] = self.borderStateRes[k]#this is trash and should not happen often
+        self.totalCurrentRes=sum(v for v in self.borderStateSelf.values())
 
     def updateBorders(self,warObj):
         self.borderStateRes = {}
@@ -179,7 +180,7 @@ class Actor:
         borderStateSelf = self.borderStateSelf
         enemyStates = list(borderStateRes.keys())
         for actor in enemyStates:
-            if borderStateRes[actor] == 0:
+            if len(self.borderStates[actor]) == 0:
                 self.borderStateRes.pop(actor,None)
                 self.borderStateSelf.pop(actor,None)
                 self.borderStateAttackProb.pop(actor,None)
@@ -193,9 +194,34 @@ class Actor:
 
     def declareWar(self,warObj):
         for k,v in self.borderStateAttackProb.items():
-            if k not in self.warStates and np.random.ranf() < v:
+            if k in self.warStates:
+                self.findPeace(k, warObj)
+            elif k not in self.warStates and np.random.ranf() < v:
                 self.warStates[k] = 0
                 warObj.actorDict[k].warStates[self.actorNum] = 0
+
+    def findPeace(self,enemyNum,warObj):
+        warDamages = self.warStates[enemyNum]
+        enemy = warObj.actorDict[enemyNum]
+        if self.sigmoidPeace(self.totalCurrentRes,warDamages) and self.sigmoidPeace(enemy.totalCurrentRes,warDamages):
+            v = self.warStates[enemyNum]
+            v2= enemy.warStates[self.actorNum]
+            self.warStates.pop(int(enemyNum))
+            enemy.warStates.pop(self.actorNum)
+            print('DIFFERENCE:', abs(v - v2))
+            warObj.warDamages.append(v)
+            #TODO add to data
+
+    def sigmoidPeace(self, p1, p2):
+        if p1 == 0: return 0
+        if p2 == 0: return 1
+        rate = p1 / p2
+        val =  1 / (1 + np.exp((4-rate)*3))
+        # print(val)
+        if math.isnan(val):
+            val = 0
+        return val > np.random.ranf()
+
 
 
     def sigmoid(self, p1,p2):
@@ -203,7 +229,7 @@ class Actor:
         if p1 == 0: return 0
         if p2 == 0: return 1
         rate = p1 / p2
-        val =  1 / (1 + np.exp((3-rate)*5))
+        val =  1 / (1 + np.exp((3-rate)*3))
         # print(val)
         if math.isnan(val):
             val = 0
@@ -217,6 +243,7 @@ class War2D:
         """Initializes the attributes.
 
         """
+        self.warDamages = []
         self.boardSize = boardSize
         self.totalSquares = boardSize**2
         self.numberPlayers = numberPlayers
@@ -276,6 +303,8 @@ class War2D:
     def conquer(self,loser):
         for i in loser.borders:
             loser.provinces[i].res = 0
+        for k in loser.warStates.keys():
+            self.warDamages.append(loser.warStates[k])
         #//TODO
 
     def colorCodeProvinces(self):
@@ -362,8 +391,6 @@ class War2D:
             self.actorWars()
             self.colorCodeProvinces()
 
-
-
     def battle(self, flank, p2):
         """Defines the battle behavior for province p1 and province p2"""
         BATTLE_DAMAGE = 0.1 # battle damage
@@ -382,6 +409,8 @@ class War2D:
                 x.res -= x.res * BATTLE_DAMAGE
             p2.res -= flankRes * BATTLE_DAMAGE
             # print('p1.res:', p1.res)
+            self.actorDict[a1].warStates[a2] += flankRes * BATTLE_DAMAGE
+            self.actorDict[a2].warStates[a1] += flankRes * BATTLE_DAMAGE
             randProb = np.random.ranf()
 
             if probWinning < randProb:
