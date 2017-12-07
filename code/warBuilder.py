@@ -219,7 +219,6 @@ class Actor:
             enemy.warStates.pop(self.actorNum)
             print('DIFFERENCE:', abs(v - v2))
             warObj.warDamages.append(v)
-            #TODO add to data
 
     def sigmoidPeace(self, p1, p2):
         if p1 == 0: return 0
