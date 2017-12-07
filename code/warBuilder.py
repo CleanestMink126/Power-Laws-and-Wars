@@ -32,7 +32,7 @@ class Actor:
         self.capital = pos
         self.provinces = {pos: Province(pos)} #k = pos v = province obj
         self.borders = {pos}#list of border states
-        self.probexpand =  np.random.ranf()/2 # probability to expand
+        self.probexpand =  np.random.ranf()/3 + .1 # probability to expand
         self.fixesRes = .5
 
 
@@ -109,8 +109,8 @@ class Actor:
 
 
     def distributeResources(self, totalRes,warObj):
-        print('TOTAL RES:',totalRes)
-        print('TOTAL WAR:',self.totalWar)
+        # print('TOTAL RES:',totalRes)
+        # print('TOTAL WAR:',self.totalWar)
         borderList = list(self.borders)
          #these variables
         #mean nothing by themself I just multiplied out the constants at the beginning
@@ -136,17 +136,28 @@ class Actor:
                     if state in self.warStates:
                         self.provinces[k].res += (variableRate) * (eRes - self.provinces[k].res - self.minV)# add more if they are at war
 
+    def getFlanks(self, pos, enemyNum, warObj):
+        borders, same = warObj.numBorder(enemyNum, pos)
+        listFlanks = []
+        for border in borders:
+            if border in self.provinces:
+                listFlanks.append(self.provinces[border])
+        return listFlanks
+
     def actorBattle(self,k,enemyActor,warObj):
         borders,_ = warObj.numBorder(self.actorNum, k) #find eneemys that are adjacent
+
         for border in borders: #for all the enemies near the border province
             if border in enemyActor.provinces: #
+                flanks = self.getFlanks(border,enemyActor.actorNum, warObj)
                 enemyProvince = enemyActor.provinces[border]
+
                 if k in self.provinces:
-                    conquered = warObj.battle(self.provinces[k],enemyProvince)#fight!
+                    conquered = warObj.battle(flanks,enemyProvince)#fight!
                 else:
                     conquered=0
                 if conquered:#if there is a loser
-                    print("CONQUERED")
+                    # print("CONQUERED")
                     warObj.switchProvince(border, enemyActor,self,k)
 
     def wageWar(self, warObj):
@@ -192,7 +203,7 @@ class Actor:
         if p1 == 0: return 0
         if p2 == 0: return 1
         rate = p1 / p2
-        val =  1 / (1 + np.exp((3-rate)*3))
+        val =  1 / (1 + np.exp((3-rate)*5))
         # print(val)
         if math.isnan(val):
             val = 0
@@ -249,8 +260,8 @@ class War2D:
             winner.provinces[k].res = 0
         # print(newRes)
         winner.addProvince(pos, province,self,newRes)
-        # if pos == loser.capital:
-        #     self.conquer(loser,winner)
+        if pos == loser.capital:
+            self.conquer(loser)
         if pos in loser.borderStates[winner.actorNum]:
             loser.borderStates[winner.actorNum].remove(pos)
             for border in borders:
@@ -262,8 +273,9 @@ class War2D:
                     winner.borderStates[loser.actorNum].remove(border)
 
 
-    def conquer(self,loser, winner):
-        winner.provinces += loser.provinces
+    def conquer(self,loser):
+        for i in loser.borders:
+            loser.provinces[i].res = 0
         #//TODO
 
     def colorCodeProvinces(self):
@@ -315,14 +327,19 @@ class War2D:
 
     def updateActorSelfBorders(self):
         for actor in self.actorDict.values():#loop through and expand actors. should be shuffled in future
+
             actor.updateSelfBorders(self)
             actor.updateProbAttack()
 
     def updateActorDist(self):
 
         for actor in self.actorDict.values():#loop through and expand actors. should be shuffled in future
-            totalRes = self.FIXED_RES * len(actor.provinces)
-            actor.distributeResources(totalRes,self)
+            if self.npBoard[actor.capital] == actor.actorNum:
+                totalRes = self.FIXED_RES * len(actor.provinces)
+                actor.distributeResources(totalRes,self)
+            else:
+                totalRes = 0
+                actor.distributeResources(totalRes,self)
 
     def actorWars(self):
         for actor in self.actorDict.values():#loop through and expand actors. should be shuffled in future
@@ -347,26 +364,27 @@ class War2D:
 
 
 
-    def battle(self, p1, p2):
+    def battle(self, flank, p2):
         """Defines the battle behavior for province p1 and province p2"""
         BATTLE_DAMAGE = 0.1 # battle damage
-        a1 = self.npBoard[p1.pos] # the actor ID of province p1
+        a1 = self.npBoard[flank[0].pos] # the actor ID of province p1
         a2 = self.npBoard[p2.pos] # the actor ID of province p2
         # probAttacking = self.actorDict[a1].borderStateAttackProb[a2] # probability that p1 will attack p2, macroscopic level
         # print('Win Prob')
         # print('TOP:', p1.res )
         # print('BOTTOM:', p2.res)
-        probWinning = self.actorDict[a1].sigmoid(p1.res , p2.res) # probability that p1 will win against p2, microscopic province level
+        flankRes = sum(x.res for x in flank)
+        probWinning = self.actorDict[a1].sigmoid(flankRes , p2.res) # probability that p1 will win against p2, microscopic province level
 
         randProb = np.random.ranf()
         while probWinning > randProb: # won
-            p1.res -= p1.res * BATTLE_DAMAGE
-            p2.res -= p1.res * BATTLE_DAMAGE
-            print('p1.res:', p1.res)
+            for x in flank:
+                x.res -= x.res * BATTLE_DAMAGE
+            p2.res -= flankRes * BATTLE_DAMAGE
+            # print('p1.res:', p1.res)
             randProb = np.random.ranf()
 
-            if probWinning < randProb or p1.res <= 0:
-                p1.res = 0
+            if probWinning < randProb:
                 return False
             elif p2.res <= 0:
                 p2.res = 0
@@ -374,7 +392,8 @@ class War2D:
             # print('Win Prob')
             # print('TOP:', p1.res )
             # print('BOTTOM:', p2.res)
-            probWinning = self.actorDict[a1].sigmoid(p1.res , p2.res) # probability that p1 will win against p2, microscopic province level
+            flankRes = sum(x.res for x in flank)
+            probWinning = self.actorDict[a1].sigmoid(flankRes , p2.res) # probability that p1 will win against p2, microscopic province level
             randProb = np.random.ranf()
         return False
 

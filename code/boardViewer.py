@@ -34,7 +34,7 @@ class War2DViewer:
 
         grid: boolean, whether to draw grid lines
         """
-        self.draw_array(self.viewee.image)
+        self.draw_array()
         if grid:
             self.draw_grid()
 
@@ -43,7 +43,9 @@ class War2DViewer:
         # Note: we have to make a copy because some implementations
         # of step perform updates in place.
         if array is None:
-            array = self.viewee.image
+            a = self.viewee.image
+            b = self.viewee.image2
+            array = np.concatenate((a,b), axis = 1)
         a = array.copy()
         # cmap = self.cmap if cmap is None else cmap
 
@@ -92,11 +94,13 @@ class War2DViewer:
         if i > 0:
             self.step()
         a = self.viewee.image
-        self.im.set_array(a)
+        b = self.viewee.image2
+        c = np.concatenate((a,b), axis = 1)
+        self.im.set_array(c)
         return (self.im,)
 
 if __name__ == "__main__":
-    mywar = warBuilder.War2D(100, 20)
+    mywar = warBuilder.War2D(100, 30)
     animator = War2DViewer(mywar)
     anim = animator.animate(frames = 40, interval = 300)
     plt.show()
