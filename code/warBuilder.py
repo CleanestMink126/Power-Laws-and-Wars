@@ -34,6 +34,7 @@ class Actor:
         self.borders = {pos}#list of border states
         self.probexpand =  np.random.ranf()/3 + .1 # probability to expand
         self.fixesRes = .5
+        self.extraRes = 0
 
 
     def addProvince(self, pos, province, warObj, res = 0):
@@ -137,6 +138,14 @@ class Actor:
                     if state in self.warStates:
                         self.provinces[k].res += (variableRate) * (eRes - self.provinces[k].res - self.minV)# add more if they are at war
 
+    def reallocateExtra(self,warObj):
+        totalColleted = 0
+        for province in self.provinces.values():
+            if province.res != 0 and (province.pos not in self.borders):
+                totalColleted += province.res * warObj.distanceFunc(province.distToCapital)
+                province.res = 0
+        self.extraRes = totalColleted
+
     def getFlanks(self, pos, enemyNum, warObj):
         borders, same = warObj.numBorder(enemyNum, pos)
         listFlanks = []
@@ -216,13 +225,11 @@ class Actor:
         if p1 == 0: return 0
         if p2 == 0: return 1
         rate = p1 / p2
-        val =  1 / (1 + np.exp((4-rate)*3))
+        val =  1 / (1 + np.exp((10-rate)*3))
         # print(val)
         if math.isnan(val):
             val = 0
         return val > np.random.ranf()
-
-
 
     def sigmoid(self, p1,p2):
         # print('R',rate)
@@ -236,13 +243,14 @@ class Actor:
         return val
 
 class War2D:
-    """Implements Conway's Game of Life."""
+    """Implements War"""
     initStage= True
     numberProvinces = 0
     def __init__(self, boardSize, numberPlayers):
         """Initializes the attributes.
 
         """
+        self.totalSteps = 0
         self.warDamages = []
         self.boardSize = boardSize
         self.totalSquares = boardSize**2
@@ -251,6 +259,7 @@ class War2D:
         self.actorDict = {} # k: actorID, v: actorObjects
         self.dictCols = {0:(0.,0.,0.)} #dictionary relating actor ID and color
         self.FIXED_RES = 1 # constant for initial resource allocatead to each provinces
+        self.maxDistance = math.sqrt(2)*self.boardSize
         positions = np.random.choice(boardSize*boardSize, numberPlayers)#randomly initialize actors
         for i,v in enumerate(positions):#make the actors and add them to variables
             pos = (v%boardSize,v//boardSize)
@@ -313,12 +322,11 @@ class War2D:
             for y in range(self.boardSize):
                 actor = self.actorDict[self.npBoard[x,y]]
                 province = actor.provinces[(x,y)]
-                if math.isnan(province.res):
+                if math.isnan(province.res) or province.res < 0:
                     self.image2[x,y,:] = [0.,0.,0.]
-                    self.image[x,y,:] = [0.,0.,0.]
                 else:
-                    self.image2[x,y,:] = [province.res, province.res, province.res]
-                if province.res > maxv: maxv = province.res
+                    self.image2[x,y,:] = [math.log(province.res+1),math.log(province.res+1), math.log(province.res+1)]
+                if province.res > maxv: maxv = math.log(province.res+1)
 
         self.image2 /= maxv
 
@@ -364,15 +372,20 @@ class War2D:
 
         for actor in self.actorDict.values():#loop through and expand actors. should be shuffled in future
             if self.npBoard[actor.capital] == actor.actorNum:
-                totalRes = np.sum([self.FIXED_RES * self.distanceFunc(province.distToCapital) for province in actor.provinces.values()])
+                totalRes = np.sum([self.FIXED_RES * self.distanceFunc(province.distToCapital) for province in actor.provinces.values()]) + actor.extraRes
                 actor.distributeResources(totalRes,self)
+                actor.extraRes = 0
             else:
                 totalRes = 0
                 actor.distributeResources(totalRes,self)
 
+    def garbageCollection(self):
+        for actor in self.actorDict.values():#
+            if self.npBoard[actor.capital] == actor.actorNum:
+                actor.reallocateExtra(self)
+
     def distanceFunc(self, distToCapital):
-        maxDistance = math.sqrt(self.boardSize**2 + self.boardSize**2)
-        return (maxDistance - distToCapital) / maxDistance
+        return (self.maxDistance - distToCapital) / self.maxDistance
 
     def actorWars(self):
         for actor in self.actorDict.values():#loop through and expand actors. should be shuffled in future
@@ -389,10 +402,13 @@ class War2D:
                 self.initRes()
                 self.initStage = False
         else:
+            self.totalSteps += 1
             self.updateActorBorders()
             self.updateActorSelfBorders()
             self.updateActorDist()
             self.actorWars()
+            if not self.totalSteps % 5:
+                self.garbageCollection()
             self.colorCodeProvinces()
 
     def battle(self, flank, p2):
