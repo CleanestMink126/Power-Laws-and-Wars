@@ -7,7 +7,8 @@ from matplotlib import animation
 from scipy.signal import convolve2d
 
 import warBuilder
-
+from thinkstats2 import Pmf, Pdf, Cdf, Hist
+import thinkplot
 
 
 class War2DViewer:
@@ -98,9 +99,22 @@ class War2DViewer:
         c = np.concatenate((a,b), axis = 1)
         self.im.set_array(c)
         return (self.im,)
+    # Pmf, Pdf, Cdf, Hist
+
+    def plotPDF(self, lst):
+        pmf = Pmf(lst)
+        thinkplot.Pdf(pmf, style='.', label='PDF')
+        thinkplot.config(xscale='log', yscale='log', xlabel='severity', ylabel='PMF')
+        plt.savefig('pdf.png')
 
 if __name__ == "__main__":
     mywar = warBuilder.War2D(100, 30)
-    animator = War2DViewer(mywar)
-    anim = animator.animate(frames = 40, interval = 300)
-    plt.show()
+    for i in range(500):
+        mywar.step()
+        print("STEP:"+ str(i))
+    print(mywar.warDamages)
+    plotter = War2DViewer(mywar)
+    plotter.plotPDF(mywar.warDamages)
+    # animator = War2DViewer(mywar)
+    # anim = animator.animate (frames = 40, interval = 300)
+    # plt.show()

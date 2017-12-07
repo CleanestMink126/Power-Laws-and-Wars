@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import math
+
 np.seterr(divide='ignore', invalid='ignore')
 class Province:
     '''Province class that contains the number of borders and contained resources'''
