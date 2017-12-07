@@ -125,7 +125,7 @@ class Actor:
         elif self.totalEnemy:
             fixedRate = (totalRes)/self.totalEnemy
         for k in borderList:
-            borders,same = warObj.numBorder(self.actorNum, k)#find borders
+            borders, same = warObj.numBorder(self.actorNum, k) #find borders
             oldRes = self.provinces[k].res
             if not len(borders):#if there are no borders get rid of it
                 self.borders.pop(k)
@@ -364,11 +364,15 @@ class War2D:
 
         for actor in self.actorDict.values():#loop through and expand actors. should be shuffled in future
             if self.npBoard[actor.capital] == actor.actorNum:
-                totalRes = self.FIXED_RES * len(actor.provinces)
+                totalRes = np.sum([self.FIXED_RES * self.distanceFunc(province.distToCapital) for province in actor.provinces.values()])
                 actor.distributeResources(totalRes,self)
             else:
                 totalRes = 0
                 actor.distributeResources(totalRes,self)
+
+    def distanceFunc(self, distToCapital):
+        maxDistance = math.sqrt(self.boardSize**2 + self.boardSize**2)
+        return (maxDistance - distToCapital) / maxDistance
 
     def actorWars(self):
         for actor in self.actorDict.values():#loop through and expand actors. should be shuffled in future
@@ -456,7 +460,7 @@ class War2D:
                 borders,same = self.numBorder(actor.actorNum, k)
                 actor.provinces[k].numBorders = len(borders)
                 actor.numTotalBorders += len(borders)
-            totalRes = self.FIXED_RES * len(actor.provinces)
+            totalRes = np.sum([self.FIXED_RES * self.distanceFunc(province.distToCapital) for province in actor.provinces.values()])
             borderProvinces = list(actor.borders)
             for borderProvince in borderProvinces:
                 actor.provinces[borderProvince].res = int(totalRes * actor.provinces[borderProvince].numBorders / actor.numTotalBorders)
