@@ -19,6 +19,7 @@ Contextual activation means increased alertness to geopolitical changes in case 
 By implementing a similar agent-based model, we seek to find answer for the following questions : How do wars start and spread? why are casualty levels of wars power-law distributed?
 
 1. State Formation Phase
+
 2. Decision Phase
 3. Battle Phase
 

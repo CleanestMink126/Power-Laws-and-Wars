@@ -229,7 +229,8 @@ class Actor:
         # print(val)
         if math.isnan(val):
             val = 0
-        return val > np.random.ranf()
+        randnum = np.random.ranf()
+        return val > randnum
 
     def sigmoid(self, p1,p2):
         # print('R',rate)
