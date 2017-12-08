@@ -9,6 +9,7 @@ from scipy.signal import convolve2d
 import warBuilder
 from thinkstats2 import Pmf, Pdf, Cdf, Hist
 import thinkplot
+import pickle
 
 
 class War2DViewer:
@@ -101,20 +102,23 @@ class War2DViewer:
         return (self.im,)
     # Pmf, Pdf, Cdf, Hist
 
-    def plotPDF(self, lst):
-        pmf = Pmf(lst)
-        thinkplot.Pdf(pmf, style='.', label='PDF')
-        thinkplot.config(xscale='log', yscale='log', xlabel='severity', ylabel='PMF')
-        plt.savefig('pdf.png')
+    def plotCDF(self, lst):
+        cdf = Cdf(lst)
+        thinkplot.Cdf(Cdf(lst), style='.', label='CDF', complement=True)
+        thinkplot.config(xscale='log', yscale='log', xlabel='severity', ylabel='CDF')
+        plt.savefig('cdf1.png')
 
 if __name__ == "__main__":
     mywar = warBuilder.War2D(100, 30)
-    # for i in range(500):
-    #     mywar.step()
-    #     print("STEP:"+ str(i))
-    # print(mywar.warDamages)
+    # for i in range(10000):
+        # mywar.step()
+        # print("STEP:"+ str(i))
+
     # plotter = War2DViewer(mywar)
-    # plotter.plotPDF(mywar.warDamages)
+    # pickle.dump(mywar.warDamages, open('data.pickle', 'wb'))
+    # loaded_data = pickle.load(open('data.pickle', 'rb'))
+    # plotter.plotCDF(mywar.warDamages)
+
     animator = War2DViewer(mywar)
     anim = animator.animate (frames = 40, interval = 300)
     plt.show()
