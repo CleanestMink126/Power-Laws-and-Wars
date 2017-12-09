@@ -135,9 +135,9 @@ class Actor:
                 for b in borders:
                     state = warObj.npBoard[b]#get the state each border belongs to
                     eRes = warObj.actorDict[state].provinces[b].res#get that provinces resources
-                    self.provinces[k].res += fixedRate * eRes #scale according to current resources
+                    self.provinces[k].res += fixedRate * eRes * warObj.distanceFunc(self.provinces[k].distToCapital) #scale according to current resources
                     if state in self.warStates:
-                        self.provinces[k].res += (variableRate) * (eRes - self.provinces[k].res - self.minV)# add more if they are at war
+                        self.provinces[k].res += (variableRate) * (eRes - self.provinces[k].res - self.minV) * warObj.distanceFunc(self.provinces[k].distToCapital)# add more if they are at war
 
     def reallocateExtra(self,warObj):
         totalColleted = 0
@@ -225,7 +225,7 @@ class Actor:
         if p1 == 0: return 0
         if p2 == 0: return 1
         rate = p1 / p2
-        val =  1 / (1 + np.exp((10-rate)*3))
+        val =  1 / (1 + np.exp((15-rate)))
         # print(val)
         if math.isnan(val):
             val = 0
