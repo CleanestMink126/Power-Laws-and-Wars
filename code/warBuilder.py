@@ -222,10 +222,11 @@ class Actor:
             warObj.warDamages.append(v)
 
     def sigmoidPeace(self, p1, p2):
+        return 0
         if p1 == 0: return 0
         if p2 == 0: return 1
         rate = p1 / p2
-        val =  1 / (1 + np.exp((15-rate)))
+        val =  1 / (1 + np.exp((10-rate)/2))
         # print(val)
         if math.isnan(val):
             val = 0
