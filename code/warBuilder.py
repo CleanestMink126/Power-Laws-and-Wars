@@ -33,7 +33,7 @@ class Actor:
         self.capital = pos
         self.provinces = {pos: Province(pos)} #k = pos v = province obj
         self.borders = {pos}#list of border states
-        self.probexpand =  np.random.ranf()/3 + .1 # probability to expand
+        self.probexpand =  np.random.ranf()/3 # probability to expand
         self.fixesRes = .5
         self.extraRes = 0
 
@@ -222,7 +222,6 @@ class Actor:
             warObj.warDamages.append(v)
 
     def sigmoidPeace(self, p1, p2):
-        return 0
         if p1 == 0: return 0
         if p2 == 0: return 1
         rate = p1 / p2
@@ -285,6 +284,12 @@ class War2D:
         plt.imshow(self.image2)
         plt.show()
 
+    def finished(self):
+        alive = 0
+        for num, actor in self.actorDict.items():
+            if self.npBoard[actor.capital] == num:
+                alive += 1
+        return alive<2
     def switchProvince(self,pos, loser, winner,k):#UPDATE
         province = loser.removeProvince(pos, self)
         self.npBoard[pos] = winner.actorNum#
@@ -485,7 +490,7 @@ class War2D:
 
 if __name__ == "__main__":
 
-    mywar = War2D(100, 10)
+    mywar = War2D(100, 30)
     for i in range(100):
         mywar.step()
         if not i % 10:

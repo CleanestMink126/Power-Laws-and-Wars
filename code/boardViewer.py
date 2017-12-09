@@ -109,16 +109,23 @@ class War2DViewer:
         plt.savefig(filename)
 
 if __name__ == "__main__":
-    mywar = warBuilder.War2D(200, 100)
+    aggWar = []
+    mywar = warBuilder.War2D(100, 30)
+    # animator = War2DViewer(mywar)
+    # anim = animator.animate (frames = 40, interval = 300)
     for i in range(500):
         mywar.step()
-        print("STEP:"+ str(i))
+        if i %10 and mywar.finished():
+            aggWar.extend(mywar.warDamages)
+            mywar = warBuilder.War2D(100, 30)
 
+        print("STEP:"+ str(i))
+    aggWar.extend(mywar.warDamages)
     plotter = War2DViewer(mywar)
     # pickle.dump(mywar.warDamages, open('data.pickle', 'wb'))
     # loaded_data = pickle.load(open('data.pickle', 'rb'))
-    plotter.plotCDF(mywar.warDamages, '1000steps.png')
+    plotter.plotCDF(aggWar, 'agg500.png')
 
-    animator = War2DViewer(mywar)
-    anim = animator.animate (frames = 40, interval = 300)
+
+
     plt.show()
