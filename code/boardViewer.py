@@ -102,22 +102,22 @@ class War2DViewer:
         return (self.im,)
     # Pmf, Pdf, Cdf, Hist
 
-    def plotCDF(self, lst):
+    def plotCDF(self, lst,filename):
         cdf = Cdf(lst)
         thinkplot.Cdf(Cdf(lst), style='.', label='CDF', complement=True)
-        thinkplot.config(xscale='log', yscale='log', xlabel='severity', ylabel='CDF')
-        plt.savefig('cdf1.png')
+        thinkplot.config(xscale='log', yscale='log', xlabel='severity', ylabel='CCDF')
+        plt.savefig(filename)
 
 if __name__ == "__main__":
-    mywar = warBuilder.War2D(100, 30)
-    # for i in range(10000):
-        # mywar.step()
-        # print("STEP:"+ str(i))
+    mywar = warBuilder.War2D(200, 100)
+    for i in range(500):
+        mywar.step()
+        print("STEP:"+ str(i))
 
-    # plotter = War2DViewer(mywar)
+    plotter = War2DViewer(mywar)
     # pickle.dump(mywar.warDamages, open('data.pickle', 'wb'))
     # loaded_data = pickle.load(open('data.pickle', 'rb'))
-    # plotter.plotCDF(mywar.warDamages)
+    plotter.plotCDF(mywar.warDamages, '1000steps.png')
 
     animator = War2DViewer(mywar)
     anim = animator.animate (frames = 40, interval = 300)
