@@ -13,26 +13,9 @@ Richardson in 1945, reported that the severity of all wars follows a power law d
 
 In his model, the process of technological change is represented as "a shift of loss-of-strengh gradient" which defines the amount of resource a country can "tax" from a province depending on its distance from the capital. So as the technology advances, a country can extract more tax from distant provinces. By contextually depedent decision to wage war, he means that a country is more likely to enter a war if its neighbors are at war. By stochastic decisions to wage war, he means that there exist fixed probability values associated with a country either entering or stopping a war.
 
-Inspired by Cederman's model, we design and propose a new agent-based model that adopts concepts from Cederman's model including the concept of capitals and provinces and the concept of distance-dependent taxation. We interpret "the contextually dependent and stochastic" decisions to wage war differently and implement a model that depends heavily on resources to decide 
+Inspired by Cederman's model, we design and propose a new agent-based model that adopts concepts from Cederman's model including the concept of capitals and provinces and the concept of distance-dependent taxation. We interpret "the contextually dependent and stochastic" decisions to wage war differently and implement a model that depends heavily on resources to determine the decisions to wage war and the results of the wars. With our model, we seek to find answer to the following questions : How do wars start and spread? Can we replicate the power-law distributed?
 
 Our model consists of three discrete phases : the state formation phase, the prepration phase, and the wage war phase.
-
-
-
-
-
-
-
-
-
-contextual activation - > tax
-capitals
-
-GeoSim model consists of state-like agents on a square lattice. It illustrates the transitions between equilbria. The model draws an analogy which maps the process of technological change to the sand pile stream and maps the chains of war decisions triggered by context activation to Avalanches.
-Contextual activation means increased alertness to geopolitical changes in case of conflict in a state's immediate neightborhood. Capitals can "tax" provinces and advancements in technology is modeled by shifting the tax threshold so that capital extracts more tax from distant provinces.
-
-By implementing a similar agent-based model, we seek to find answer for the following questions : How do wars start and spread? Can we replicate the power-law distributed ?
-
 
 
 ### Interpreting Results
