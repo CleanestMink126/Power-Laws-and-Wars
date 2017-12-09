@@ -1,27 +1,37 @@
-# Agent-Based Simulation of Wars and State Formation
+# Agent-Based Simulation of State Formation and Wars
 ## Nick Steelman and Seungin Lyu
 
 
 ### Abstract
 
-Lewis Richardson, in his post-WWII paper analyses the frequency and severity of wars. [3]
-He finds that the severity of the wars follows a power law distribution. Almost 50 years later, the exact reasons and principals behind this observation are still not well understood or explained with methods relying on equilibrium based models (Cederman).
-Cederman tackles the problem with an agent based model in an attempt to recreate the power law distribution first observed by Richardson [1].
-We designed and implemented a similar model to find out whether a simpler model can produce the same power-law graph. We conclude that ...(working on this part)
+Lewis Richardson, in his post-WWII paper in 1945, reported that the severity of wars follows a power law distribution [3]. Almost 70 years later, we find the exact reasons behind this observation still not well understood.
+Cederman tackles the problem with an agent based model and replicated the power law distribution first observed by Richardson [1]. Inspired my Cederman's agent based model, we designed and implemented a similar model to discover whether it is sufficient to reproduce the same power-law graph with different key concepts including resource-based decisions to wage war and distance based taxation. Our model produce a log-normal distribution and we conclude
 
 
 ### Replication and Extension
-Richardson in 1945, reported that the severity of all wars follows a power law distribution [3]. We find only a few occasions when scholars attempted to explain why. To answer these questions, Cederman designed an agent-based model called GeoSim that illustrates the transitions between equilbria in wars and state formations. By running simulations with his model, he replicates the plot Richardson generated almost 70 years ago. While one of the previous studies proposed a forest fire model [2], Cederman believed that the forest fire model of wars has too many mechanism level differences compared to the processes of real world state formation and wars but agreed that the "key to any explanation   of war sizes depends on how wars spread". [1]
+Richardson in 1945, reported that the severity of all wars follows a power law distribution [3]. Cederman attempted to explain this phenomenon by proposing an agent-based model of war and state formation called GeoSim that illustrates the power-law nature of the severity of wars. He suggested that the scale-free behavior of his model depends on "a process of technological change that leads to contextually depedent, and stochastic decisions to wage war" [3].
+
+In his model, the process of technological change is represents as "a shift of loss-of-strengh gradient" which defines the amount of resource you can "tax" from a province depending on its distance from the capital. So as the technology advances, a country can extract more taxes from distance provinces. By contextually depedent decision to wage war, he means that a country is more likely to enter a war if its neighbors are at war. By stochastic decisions to wage war, he means that there exists a probability
+
+Inspired by Cederman's model, we design and propose a new agent-based model that considers both the macroscopic country level
+
+
+
+
+
+
+
+
+contextual activation - > tax
+capitals
 
 GeoSim model consists of state-like agents on a square lattice. It illustrates the transitions between equilbria. The model draws an analogy which maps the process of technological change to the sand pile stream and maps the chains of war decisions triggered by context activation to Avalanches.
 Contextual activation means increased alertness to geopolitical changes in case of conflict in a state's immediate neightborhood. Capitals can "tax" provinces and advancements in technology is modeled by shifting the tax threshold so that capital extracts more tax from distant provinces.
 
-By implementing a similar agent-based model, we seek to find answer for the following questions : How do wars start and spread? why are casualty levels of wars power-law distributed?
+By implementing a similar agent-based model, we seek to find answer for the following questions : How do wars start and spread? Can we replicate the power-law distributed ?
 
-1. State Formation Phase
 
-2. Decision Phase
-3. Battle Phase
+
 
 
 
@@ -56,9 +66,7 @@ This figure below show the grids of resource allocation along the borders after 
  <img src="../resources/resources2.png" width=750px height=300px ></img>
 </p>
 
-<p align="center">
-<img src="../code/cdf1.png" width=1000px height=500px ></img>
-</p>
+(power law graph still needs to be replicated, we are working on it)
 
 ### Conclusion
 
