@@ -49,6 +49,8 @@ This figure below show the grids of resource allocation along the borders after 
  <img src="../resources/resources2.png" width=750px height=300px ></img>
 </p>
 
+## Power Law
+
 (power law graph still needs to be replicated, we are working on it)
 
 ### Conclusion
