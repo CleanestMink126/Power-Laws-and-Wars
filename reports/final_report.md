@@ -5,7 +5,7 @@
 ### Abstract
 
 Lewis Richardson, in his post-WWII paper in 1945, reported that the severity of wars follows a power law distribution [3]. Almost 70 years later, we find the exact reasons behind this observation still not well understood.
-Cederman tackles the problem with an agent based model and replicated the power law distribution first observed by Richardson [1]. Inspired my Cederman's agent based model, we designed and implemented a similar model to discover whether it is sufficient to reproduce the same power-law graph with different key concepts including resource-based decisions to wage war and distance based taxation. Our model produce a log-normal distribution and we conclude
+Cederman tackles the problem with an agent based model and replicated the power law distribution first observed by Richardson [1]. Inspired my Cederman's agent based model, we designed and implemented a similar model to discover whether it is sufficient to reproduce the same power-law graph with different key concepts including resource-based decisions to wage war and distance based taxation. Our model produce a log-normal distribution and we conclude (blah-blah
 
 
 ### Replication
@@ -15,8 +15,13 @@ In his model, the process of technological change is represented as "a shift of 
 
 Inspired by Cederman's model, we design and propose a new agent-based model that adopts concepts from Cederman's model including the concept of capitals and provinces and the concept of distance-dependent taxation. We interpret "the contextually dependent and stochastic" decisions to wage war differently and implement a model that depends heavily on resources to determine the decisions to wage war and the results of the wars. With our model, we seek to find answer to the following questions : How do wars start and spread? Can we replicate the power-law distributed?
 
-Our model consists of three discrete phases : the state formation phase, the prepration phase, and the wage war phase.
+Our model consists of three discrete phases : the state formation phase, the prepration phase, and the war phase.
 
+In the state formation phase, we initialize a `n x n` grid, which we use `n = 100` throughout our experiment. We define each cell as a province. Then we initialize `m` countries, with each country assigned a random capital position on the grid and a random expansion rate `P_expansion` between 0.1 and 0.43 (an arbitrary range we ended up tuning to). After all the capitals are randomly located, we expand each country by expanding the border provinces. By border provinces, we mean the outermost provinces of a country. At each time step, a border province expands and claims its unoccupied neighboring provinces on the grid (left, right, top, bottom) with the probability `P_expansion` of the country. We repeat this expansion process until there are no unoccupied provinces left on the grid. Once all the provinces are claimed by the countries, we initialize resources. The total amount of resources of a country `TotalRes` is defined as the sum of all the resources of the provinces that belongs to that country. Each province is given an initial resource that depends on its distance from the capital. We use the ratio `(maxDistanceOnGrid - DistanceFromCapital / maxDistanceOnGrid )`
+
+In the preparation phase,
+
+In the war phase,
 
 ### Interpreting Results
 
