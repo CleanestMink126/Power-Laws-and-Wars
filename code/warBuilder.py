@@ -498,7 +498,7 @@ class War2D:
 
 if __name__ == "__main__":
 
-    mywar = War2D(100, 30)
+    mywar = War2D(100, 10)
     for i in range(100):
         mywar.step()
         if not i % 2:
