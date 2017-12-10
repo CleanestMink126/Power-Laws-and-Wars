@@ -110,14 +110,19 @@ class War2DViewer:
 
 if __name__ == "__main__":
     aggWar = []
-    mywar = warBuilder.War2D(100, 30)
+    mywar = warBuilder.War2D(100, 50)
     # animator = War2DViewer(mywar)
     # anim = animator.animate (frames = 40, interval = 300)
-    for i in range(500):
-        mywar.step()
+    # plt.show()
+
+    for i in range(1000):
+        try:
+            mywar.step()
+        except KeyError:
+            mywar = warBuilder.War2D(100, 50)
         if i %10 and mywar.finished():
             aggWar.extend(mywar.warDamages)
-            mywar = warBuilder.War2D(100, 30)
+            mywar = warBuilder.War2D(100, 50)
 
         print("STEP:"+ str(i))
     aggWar.extend(mywar.warDamages)
@@ -125,7 +130,4 @@ if __name__ == "__main__":
     # pickle.dump(mywar.warDamages, open('data.pickle', 'wb'))
     # loaded_data = pickle.load(open('data.pickle', 'rb'))
     plotter.plotCDF(aggWar, 'agg500.png')
-
-
-
     plt.show()

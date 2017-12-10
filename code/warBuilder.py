@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import math
 
+victThres = 3
 np.seterr(divide='ignore', invalid='ignore')
 class Province:
     '''Province class that contains the number of borders and contained resources'''
@@ -33,7 +34,7 @@ class Actor:
         self.capital = pos
         self.provinces = {pos: Province(pos)} #k = pos v = province obj
         self.borders = {pos}#list of border states
-        self.probexpand =  np.random.ranf()/3 # probability to expand
+        self.probexpand =  np.random.ranf()/5 + .2 # probability to expand
         self.fixesRes = .5
         self.extraRes = 0
 
@@ -69,7 +70,7 @@ class Actor:
                 state = warObj.npBoard[b]#get the state
                 if state in self.borderStates:#if state indexed
                     self.borderStates[state].add(k)#add border
-                    self.borderStateRes[state] = self.borderStateRes.pop(state) + warObj.actorDict[state].provinces[b].res#add enemy resource
+                    self.borderStateRes[state] = self.borderStateRes.pop(state) + warObj.actorDict[state].provinces[b].res# * warObj.distanceFunc(self.provinces[k].distToCapital)#add enemy resource
                     if state in self.warStates:#if warring with the state
                         totalborder += 1
                         diffBorder = (warObj.actorDict[state].provinces[b].res - self.provinces[k].res)#find diff
@@ -213,7 +214,7 @@ class Actor:
     def findPeace(self,enemyNum,warObj):
         warDamages = self.warStates[enemyNum]
         enemy = warObj.actorDict[enemyNum]
-        if self.sigmoidPeace(self.totalCurrentRes,warDamages) and self.sigmoidPeace(enemy.totalCurrentRes,warDamages):
+        if self.sigmoidPeace(self.totalCurrentRes,enemy.totalCurrentRes,warDamages) and self.sigmoidPeace(enemy.totalCurrentRes,self.totalCurrentRes,warDamages):
             v = self.warStates[enemyNum]
             v2= enemy.warStates[self.actorNum]
             self.warStates.pop(int(enemyNum))
@@ -221,26 +222,32 @@ class Actor:
             print('DIFFERENCE:', abs(v - v2))
             warObj.warDamages.append(v)
 
-    def sigmoidPeace(self, p1, p2):
+    def sigmoidPeace(self, p1, p2,warDamage):
+        if warDamage < 100:
+            return False
+        probWin = self.sigmoid(p2,p1)
+        if probWin == 0: return 1
         if p1 == 0: return 0
-        if p2 == 0: return 1
-        rate = p1 / p2
-        val =  1 / (1 + np.exp((10-rate)/2))
+        if warDamage == 0: return 1
+        rate =  p1 /warDamage
+        probPeace =  1 / (1 + np.exp((10-rate)/3))
         # print(val)
-        if math.isnan(val):
-            val = 0
+        if math.isnan(probPeace):
+            probPeace = 0
         randnum = np.random.ranf()
-        return val > randnum
+        return (probPeace + probWin)/2 > randnum
 
     def sigmoid(self, p1,p2):
         # print('R',rate)
         if p1 == 0: return 0
         if p2 == 0: return 1
         rate = p1 / p2
-        val =  1 / (1 + np.exp((3-rate)*3))
+
+        val =  1 / (1 + np.exp((2.5-rate)*5))
         # print(val)
         if math.isnan(val):
             val = 0
+            print("INVALID SIGMOID")
         return val
 
 class War2D:
@@ -259,7 +266,7 @@ class War2D:
         self.npBoard = np.zeros((boardSize,boardSize), np.uint32)#board of actor ID and positions of provinces
         self.actorDict = {} # k: actorID, v: actorObjects
         self.dictCols = {0:(0.,0.,0.)} #dictionary relating actor ID and color
-        self.FIXED_RES = 1 # constant for initial resource allocatead to each provinces
+        self.FIXED_RES = 100 # constant for initial resource allocatead to each provinces
         self.maxDistance = math.sqrt(2)*self.boardSize
         positions = np.random.choice(boardSize*boardSize, numberPlayers)#randomly initialize actors
         for i,v in enumerate(positions):#make the actors and add them to variables
@@ -392,7 +399,7 @@ class War2D:
                 actor.reallocateExtra(self)
 
     def distanceFunc(self, distToCapital):
-        return (self.maxDistance - distToCapital) / self.maxDistance
+        return ((self.maxDistance - distToCapital) / self.maxDistance )**2
 
     def actorWars(self):
         for actor in self.actorDict.values():#loop through and expand actors. should be shuffled in future
@@ -421,6 +428,7 @@ class War2D:
     def battle(self, flank, p2):
         """Defines the battle behavior for province p1 and province p2"""
         BATTLE_DAMAGE = 0.1 # battle damage
+        if not len(flank): return False
         a1 = self.npBoard[flank[0].pos] # the actor ID of province p1
         a2 = self.npBoard[p2.pos] # the actor ID of province p2
         # probAttacking = self.actorDict[a1].borderStateAttackProb[a2] # probability that p1 will attack p2, macroscopic level
@@ -493,7 +501,7 @@ if __name__ == "__main__":
     mywar = War2D(100, 30)
     for i in range(100):
         mywar.step()
-        if not i % 10:
+        if not i % 2:
             mywar.show()
     mywar.show()
     mywar.show2()

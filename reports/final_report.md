@@ -37,24 +37,21 @@ The figures below show the validation from the Cederman paper along with a graph
  <img src="../resources/3-4.svg" width=750px height=300px ></img>
 </p>
 
-These figures below show the maps of the states in our model after the initialization phase.
-<p align="center">
- <img src="../resources/colored.png" width=750px height=300px ></img>
-</p>
-<p align="center">
- <img src="../resources/colored2.png" width=750px height=300px ></img>
-</p>
-
-This figure below show the grids of resource allocation along the borders after the initialization phase.
-<p align="center">
- <img src="../resources/resources.png" width=750px height=300px ></img>
-</p>
+These figure below show the maps of the states in our model after the initialization phase. The layout of the countries roughly matches that of tightly packed countries in Europe. After the initialization phase, these countries will build up their borders and begin fighting.
 
 <p align="center">
- <img src="../resources/resources2.png" width=750px height=300px ></img>
+ <img src="../resources/colored2.png" width=750px height=400px ></img>
+</p>
+
+This figure below show the grids of resource allocation along the borders after the initialization phase. Provinces on the inside of the country are allocated no resources while the borders of the country are allocated resources according to the strength of the opposing enemies.
+
+
+<p align="center">
+ <img src="../resources/resources2.png" width=750px height=400px ></img>
 </p>
 
 ## Power Law
+If you are interested in the
 
 (power law graph still needs to be replicated, we are working on it)
 
