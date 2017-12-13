@@ -17,13 +17,13 @@ Inspired by Cederman's model, we design and propose a new agent-based model that
 ### Model Description
 Our model consists of three discrete phases : the state formation phase, the preparation phase, and the war phase.
 
-In the state formation phase, we initialize a `n x n` grid. We define each cell on the grid as a province. Then we initialize `m` countries. We assigned a random capital position on the grid and a random expansion rate `P_expansion` between 0.2 and 0.4 to each country. After random allocation of capitals, we expand each country by expanding the border provinces. By border provinces, we mean the outermost provinces of a country. At each time step, a border province expands and claims its unoccupied neighboring provinces on the grid (left, right, top, bottom) with the probability `P_expansion` of the country. We repeat this expansion process until there are no unoccupied provinces left on the grid as shown in Figure 2. This gradual expansion of countries is substantially different from the Cederman model in which all countries are initialized on the grid with predefined territories as shown in Figure 1.
+In the state formation phase, we initialize a `n x n` grid. We define each cell on the grid as a province. Then we initialize `m` countries. To each country, we assign a random capital position on the grid and a random expansion rate `P_expansion` between 0.2 and 0.4 . After the random allocation of capitals, we expand each country by expanding the border provinces. By border provinces, we mean the outermost provinces of a country. At each time step, a border province expands and claims its unoccupied neighboring provinces on the grid (left, right, top, bottom) with the probability `P_expansion` of the country. We repeat this expansion process until there are no unoccupied provinces left on the grid as shown in Figure 2. This gradual expansion of countries is substantially different from the Cederman model in which all countries are initialized on the grid with predefined territories as shown in Figure 1.
 
 <p align="center">
  <img src="../resources/3.png" width=500px height=300px ></img>
 </p>
 <center>
-**Figure 1.** : The grid of Cederman's phase after the initialization. Each country is surrounded by puzzle-like boundaries and the black dots represent the capitals. [3]
+Figure 1. : The grid of Cederman's phase after the initialization. Each country is surrounded by puzzle-like boundaries and the black dots represent the capitals. [3]
 </center>
 <br><br>
 
@@ -31,14 +31,14 @@ In the state formation phase, we initialize a `n x n` grid. We define each cell 
  <img src="../resources/expanding.jpg" width=800px height=300px ></img>
 </p>
 <center>
-**Figure 2.** : (left, middle) :  The grid during the initialization phase. (right) : The grid after the initialization phase. The black dots represent the capitals. The layout of the countries with unique colors roughly matches that of tightly packed countries on an actual map.*
+Figure 2. : (left, middle) :  The grid during the initialization phase. (right) : The grid after the initialization phase. The black dots represent the capitals. The layout of the countries with unique colors roughly matches that of tightly packed countries on a real map.*
 </center>
 <br>
 <br>
 
 Once all the provinces are claimed by the countries, we initialize resources. Each province is given an initial resource that depends on its distance from the capital. We define
 `(MaxPossibleDistance - DistanceFromCapital / MaxPossibleDistance )^2`
-as the amount of the initial resources allocated to each province. This definition of resources illustrates the property that provinces closer to the capital get more resources while provinces far away from the capital get less resources. This idea is also present in the Cederman model, but implemented with a variable amount of taxation dependent on the time since the model starts, in order to represent increased taxation due to the advancement of technology.
+as the amount of the initial resources allocated to each province. This definition of resources illustrates the property that provinces closer to the capital get more resources while provinces far away from the capital get less resources. This idea is also present in the Cederman model, but implemented with a variable amount of taxation dependent on the time since the model started, in order to represent increased taxation due to the advancement of technology.
 
 Then, we define `TotalRes`, the total amount of resources of a country, as the sum of all the resources of the provinces that belong to that country. At the end of this state formation phase, we evenly distribute `TotalRes` among the border provinces that face enemy provinces. In short, we allocate the resources only to the border provinces because only the border provinces directly affect the decisions to wage war and the war results.
 
@@ -51,7 +51,7 @@ Figure 3 shows the resource allocation along the borders after the initializatio
  <img src="../resources/resources2.png" width=750px height=400px ></img>
 </p>
 <center>
-**Figure 3.** : Grid with resource allocated at each border province after the initialization phase. Black indicates no resources while white indicates the allocated resources.
+Figure 3. : Grid with resource allocated at each border province after the initialization phase. Black indicates no resources while white indicates the allocated resources.
 </center>
 <br>
 <br>
@@ -74,19 +74,19 @@ Then each province wages war at the microscopic level, again using the same sigm
 </p>
 
 <center>
-**Figure 4.** : The purple country expands and takes the capital of the green country, causing the green country to collapse and gets taken over by all its neighbors.
+Figure 4. : The purple country expands and takes the capital of the green country, causing the green country to collapse and gets taken over by all its neighbors.
 </center>
 
 
 ### Interpreting Results
 
-*Figure 5* shows the power law distribution discovered by the originally Richardson paper. The Cederman paper validates its model through reproduction of this graph shown in *Figure 6*.
+Figure 5 shows the power law distribution discovered by the originally Richardson paper. The Cederman paper validates its model through reproduction of this graph shown in *Figure 6*.
 
 <p align="center">
  <img src="../resources/1-2.svg" width=1000px height=500px ></img>
 </p>
 <center>
-**Figure 5.** : (left) The distribution of wars on a log-log scale with frequency and severity from Richardson [1] (right) The distribution of wars from an updated record of wars accumulated until 1997. [3].
+Figure 5. : (left) The distribution of wars on a log-log scale with frequency and severity from Richardson [1] (right) The distribution of wars from an updated record of wars accumulated until 1997. [3].
 </center>
 
 <br>
@@ -95,14 +95,14 @@ Then each province wages war at the microscopic level, again using the same sigm
 </p>
 
 <center>
-**Figure 6.** : The simulated cumulative frequency distribution generated from Cederman's model [3]
+Figure 6. : The simulated cumulative frequency distribution generated from Cederman's model [3]
 </center>
 
 <p align="center">
  <img src="../resources/bestloglog.png" width=500px height=500px ></img>
 </p>
 <center>
-**Figure 7.** : The simulated complementary cumulative  distribution of frequency war severity generated from our model. Note that the maximum severity is in the range of 10^10 which is substantially greater than that of Figure 6 (10^7).
+Figure 7. : The simulated complementary cumulative  distribution of frequency war severity generated from our model. Note that the maximum severity is in the range of 10^10 which is substantially greater than that of Figure 6 (10^7).
 </center>
 <br>
 
@@ -119,16 +119,16 @@ the variable `Advantage` dictates how strong a country should be to be able to a
  <img src="../resources/agg500.png" width=800px height=500px ></img>
 </p>
 <center>
-**Figure 8.** : The simulated cumulative frequency distribution generated from our model with large `Advantage` value. The distribution looks more log-normal than log-log.
+Figure 8. : The simulated cumulative frequency distribution generated from our model with large `Advantage` value. The distribution looks more log-normal than log-log.
 </center>
 <br>
 Alternatively when `Advantage` is set too high, countries will not attack unless they have a very significant advantage over their neighbor. This leads either to the larger initial countries slowly taking over all their neighbors as the rest weight in fear, or to a quick steady state without much fighting.
 
 ### Conclusion
 
-In this paper we take the incredibly complex interactions of war and simplify them down into model. In this process, there are many design choices that are equally viable for modeling purposes. In this paper, re-implement Cederman's model, making substantially different decision while keeping his model's property of having contextually dependent, and stochastic decisions to wage war. Despite the large disparity in implementation, we see similar results. We find that the essential part of our model is the parameters deciding when a country attacks and wages war, with the majority of other parameters playing extraneous roles. This conclusion is consistent with those drawn from the Cederman paper, implying war and battle decisions play a key role in the observed power-law war distribution observed.
+We take the incredibly complex interactions of war and simplify them down into an agent-based model. We find that there are many design choices that are equally viable for modeling purposes. We re-implement Cederman's model, making substantially different decision while keeping his model's property of having contextually dependent, and stochastic decisions to wage war. Despite the large disparity in implementation, we see similar results. We find that the essential part of our model is the parameters deciding when a country attacks and wages war, with the majority of other parameters playing extraneous roles. This conclusion is consistent with those drawn from the Cederman paper, implying war and battle decisions play a key role in the observed power-law war distribution observed.
 
-For future steps, we suggest the verification of our country initialization algorithm on a grid by comparing the layout to actual maps of countries. We also suggest exploring the concept of alliance and check if it yields steady end-states as observed in real the real world.
+For future steps, we suggest the verification of our country initialization algorithm on a grid by comparing the layout to actual maps of countries. We also suggest exploring the concept of alliance and check if adding alliances yields steady end-states as observed in the real world.
 
 ### Annotated Bibliography
 
