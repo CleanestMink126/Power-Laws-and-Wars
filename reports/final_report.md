@@ -122,6 +122,7 @@ the variable `Advantage` dictates how strong a country should be to be able to a
 Figure 8. The simulated cumulative frequency distribution generated from our model with large `Advantage` value. The distribution looks more log-normal than log-log.
 </center>
 <br>
+<br>
 Alternatively when `Advantage` is set too high, countries will not attack unless they have a very significant advantage over their neighbor. This leads either to the larger initial countries slowly taking over all their neighbors as the rest weight in fear, or to a quick steady state without much fighting.
 
 ### Conclusion
