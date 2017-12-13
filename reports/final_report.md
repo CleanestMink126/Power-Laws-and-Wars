@@ -23,7 +23,7 @@ In the state formation phase, we initialize a `n x n` grid. We define each cell 
  <img src="../resources/3.png" width=500px height=300px ></img>
 </p>
 <center>
-Figure 1. : The grid of Cederman's phase after the initialization. Each country is surrounded by puzzle-like boundaries and the black dots represent the capitals. [3]
+Figure 1. The grid of Cederman's phase after the initialization. Each country is surrounded by puzzle-like boundaries and the black dots represent the capitals. [3]
 </center>
 <br><br>
 
@@ -31,7 +31,7 @@ Figure 1. : The grid of Cederman's phase after the initialization. Each country 
  <img src="../resources/expanding.jpg" width=800px height=300px ></img>
 </p>
 <center>
-Figure 2. : (left, middle) :  The grid during the initialization phase. (right) : The grid after the initialization phase. The black dots represent the capitals. The layout of the countries with unique colors roughly matches that of tightly packed countries on a real map.*
+Figure 2. (left, middle) :  The grid during the initialization phase. (right) : The grid after the initialization phase. The black dots represent the capitals. The layout of the countries with unique colors roughly matches that of tightly packed countries on a real map.*
 </center>
 <br>
 <br>
@@ -51,7 +51,7 @@ Figure 3 shows the resource allocation along the borders after the initializatio
  <img src="../resources/resources2.png" width=750px height=400px ></img>
 </p>
 <center>
-Figure 3. : Grid with resource allocated at each border province after the initialization phase. Black indicates no resources while white indicates the allocated resources.
+Figure 3. Grid with resource allocated at each border province after the initialization phase. Black indicates no resources while white indicates the allocated resources.
 </center>
 <br>
 <br>
@@ -74,7 +74,7 @@ Then each province wages war at the microscopic level, again using the same sigm
 </p>
 
 <center>
-Figure 4. : The purple country expands and takes the capital of the green country, causing the green country to collapse and gets taken over by all its neighbors.
+Figure 4. The purple country expands and takes the capital of the green country, causing the green country to collapse and gets taken over by all its neighbors.
 </center>
 
 
@@ -86,7 +86,7 @@ Figure 5 shows the power law distribution discovered by the originally Richardso
  <img src="../resources/1-2.svg" width=1000px height=500px ></img>
 </p>
 <center>
-Figure 5. : (left) The distribution of wars on a log-log scale with frequency and severity from Richardson [1] (right) The distribution of wars from an updated record of wars accumulated until 1997. [3].
+Figure 5. (left) The distribution of wars on a log-log scale with frequency and severity from Richardson [1] (right) The distribution of wars from an updated record of wars accumulated until 1997. [3].
 </center>
 
 <br>
@@ -95,14 +95,14 @@ Figure 5. : (left) The distribution of wars on a log-log scale with frequency an
 </p>
 
 <center>
-Figure 6. : The simulated cumulative frequency distribution generated from Cederman's model [3]
+Figure 6. The simulated cumulative frequency distribution generated from Cederman's model [3]
 </center>
 
 <p align="center">
  <img src="../resources/bestloglog.png" width=500px height=500px ></img>
 </p>
 <center>
-Figure 7. : The simulated complementary cumulative  distribution of frequency war severity generated from our model. Note that the maximum severity is in the range of 10^10 which is substantially greater than that of Figure 6 (10^7).
+Figure 7. The simulated complementary cumulative  distribution of frequency war severity generated from our model. Note that the maximum severity is in the range of 10^10 which is substantially greater than that of Figure 6 (10^7).
 </center>
 <br>
 
@@ -119,7 +119,7 @@ the variable `Advantage` dictates how strong a country should be to be able to a
  <img src="../resources/agg500.png" width=800px height=500px ></img>
 </p>
 <center>
-Figure 8. : The simulated cumulative frequency distribution generated from our model with large `Advantage` value. The distribution looks more log-normal than log-log.
+Figure 8. The simulated cumulative frequency distribution generated from our model with large `Advantage` value. The distribution looks more log-normal than log-log.
 </center>
 <br>
 Alternatively when `Advantage` is set too high, countries will not attack unless they have a very significant advantage over their neighbor. This leads either to the larger initial countries slowly taking over all their neighbors as the rest weight in fear, or to a quick steady state without much fighting.
